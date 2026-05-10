@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Spec — Expedite Experiment Detail Page</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --primary-light: #e8f0fe;
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #dadce0;
+    --risk-red: #d93025;
+    --risk-bg: #fce8e6;
+    --success-green: #1e8e3e;
+    --success-bg: #e6f4ea;
+    --warn-amber: #e37400;
+    --warn-bg: #fef7e0;
+    --p0: #d93025;
+    --p1: #e37400;
+    --p2: #1a73e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a2332 0%, #2d4a6f 60%, var(--primary) 100%);
+    color: #fff;
+    padding: 48px 40px 36px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .header .subtitle {
+    font-size: 1rem;
+    opacity: 0.85;
+    font-weight: 400;
+  }
+  .meta-bar {
+    display: flex;
+    gap: 32px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  .meta-item strong {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.65;
+    margin-bottom: 2px;
+  }
+
+  /* ── Content ── */
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 40px 60px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .section h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+  .section p, .section li {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .section ul, .section ol {
+    padding-left: 22px;
+  }
+
+  /* ── Placeholder / fill-in text ── */
+  .placeholder {
+    background: var(--primary-light);
+    border-left: 3px solid var(--primary);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    color: var(--primary);
+    font-size: 0.9rem;
+    margin: 12px 0;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.9rem;
+  }
+  thead th {
+    background: var(--bg);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border);
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* ── Priority badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-p0 { background: #fce8e6; color: var(--p0); }
+  .badge-p1 { background: var(--warn-bg); color: var(--p1); }
+  .badge-p2 { background: var(--primary-light); color: var(--p2); }
+
+  /* ── Metric cards ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .metric-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .metric-card .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .metric-card .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-card .target {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ── Scenario cards ── */
+  .scenario-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  .scenario-card .persona {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .scenario-card .narrative {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  /* ── Risk / Open Q cards ── */
+  .risk-card {
+    border-left: 4px solid var(--risk-red);
+    background: var(--risk-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 10px 0;
+  }
+  .risk-card .risk-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--risk-red);
+    margin-bottom: 4px;
+  }
+  .risk-card p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+
+  .question-card {
+    border-left: 4px solid var(--warn-amber);
+    background: var(--warn-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 10px 0;
+  }
+  .question-card .q-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--warn-amber);
+    margin-bottom: 4px;
+  }
+  .question-card p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+
+  /* ── UX Flow box ── */
+  .ux-flow {
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 14px 0;
+  }
+
+  /* ── Nongoal chip ── */
+  .nongoal {
+    background: #f1f3f4;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nongoal::before {
+    content: '✕';
+    color: var(--risk-red);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .content { padding: 0 20px; }
+    .section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- HEADER                                                      -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="header">
+  <h1>Expedite — Experiment Detail Page</h1>
+  <div class="subtitle">Product Specification</div>
+  <div class="meta-bar">
+    <div class="meta-item"><strong>PM Owner</strong> David Lydston</div>
+    <div class="meta-item"><strong>Team</strong> IDEAS Experimentation</div>
+    <div class="meta-item"><strong>Last Updated</strong> May 2026</div>
+    <div class="meta-item"><strong>Status</strong> Draft</div>
+    <div class="meta-item"><strong>Stakeholders</strong> M365 Copilot Leadership · Experiment Owners · Expedite Engineering · Data Science</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 1 — Problem & Opportunity           -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 1</div>
+  <h2>Problem &amp; Opportunity</h2>
+
+  <h3>Problem Statement</h3>
+  <p>Experiment owners can't tell at a glance whether to ship a feature. Today, ship/iterate/stop decisions are made by reading scorecards, which are notoriously difficult to interpret correctly: dozens of metrics, mixed stat-sig signals, no clear hierarchy between guardrails and North Stars, and no shared rationale captured alongside the decision. The result is a workflow that is slow, inconsistent across owners, and effectively unaudited — owners regularly default to gut feel or escalate to leadership for a tie-break rather than reading the data themselves, and six months later no one can reconstruct why a given experiment shipped.</p>
+
+  <h3>Opportunity</h3>
+  <p>An Experiment Detail page turns the same scorecard data into a single decision-grade view: a Copilot-recommended call (advisory), the human's actual decision, and the guardrail evidence behind it — on one URL. By compressing minutes of scorecard interpretation into seconds of glanceable judgment and by capturing decision rationale in-product (including a hard exception trail when guardrails fail), we can make every ship decision across the M365 Copilot portfolio faster, more consistent, and fully auditable. The page becomes the single source of truth for "is this ready to ship, and why?" — replacing ad-hoc scorecard reading and email threads as the deciding artifact.</p>
+
+  <h3>Evidence</h3>
+  <div class="placeholder">Quantitative evidence pending. Recommended additions before review: (1) # experiments shipped per quarter and median time from "scorecard ready" to "decision locked"; (2) % of ship decisions today that escalate to a DS partner or skip-level for interpretation help; (3) # of post-hoc audit requests where the original rationale could not be reconstructed from existing artifacts.</div>
+  <ul>
+    <li><strong>Anecdotal — Experiment owners:</strong> consistent feedback that scorecards are hard to read and that there is no shared format for "the call I made and why."</li>
+    <li><strong>Anecdotal — Reviewers / leadership:</strong> ship reviews routinely re-derive the same context from scratch because no decision artifact exists.</li>
+    <li><strong>Adjacent signal:</strong> growth in 1:1 requests to DS partners for "is this ready?" interpretation across recent quarters.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 2 — Goals & Success Metrics          -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 2</div>
+  <h2>Goals &amp; Success Metrics</h2>
+
+  <h3>Goals</h3>
+  <ol>
+    <li>Make ship/iterate/stop decisions faster and more consistent by giving experiment owners a glanceable, decision-grade view of scorecard data — replacing scorecard reading as the primary decision artifact.</li>
+    <li>Create an auditable record of every ship decision — what was decided, by whom, and why — including a structured exception trail when guardrails fail.</li>
+    <li>Establish the Detail page as the single source of truth for experiment ship readiness across the M365 Copilot portfolio.</li>
+  </ol>
+
+  <h3>Success Metrics</h3>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="label">Primary Metric</div>
+      <div class="value">Detail Page WoW Visit Growth</div>
+      <div class="target">Target: 25% week-over-week growth in unique experiment owners visiting the page · Baseline: TBD (current page traffic)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Secondary Metric</div>
+      <div class="value">Guardrail Exception Completion Rate</div>
+      <div class="target">Target: 60% of Ship decisions made over a failed guardrail include a completed Exception within 90 days of launch · Baseline: 0% (Exception flow is new)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Guardrail Metric</div>
+      <div class="value">Time-to-Decision</div>
+      <div class="target">Must not regress relative to current scorecard-app workflow — measured as median time from "scorecard ready" to "decision locked"</div>
+    </div>
+  </div>
+
+  <h3>Explicit Non-Goals</h3>
+  <div class="nongoal">Replacing the scorecard app or its drill-downs — Detail page summarizes; the scorecard remains the source of truth for raw metric exploration</div>
+  <div class="nongoal">Becoming a generic dashboard — the page is purpose-built for ship/iterate/stop decisions, not exploratory analytics</div>
+  <div class="nongoal">Auto-shipping or auto-stopping experiments — Copilot recommendations are advisory only; humans own the decision</div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 3 — User Scenarios                   -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 3</div>
+  <h2>User Scenarios</h2>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 1 — Experiment Owner reviewing for ship readiness (Primary)</div>
+    <div class="narrative">
+      <p>Priya is the Experiment Owner for a new Copilot summarization feature. Her A/B has been running for two weeks and she needs to decide whether to ship. Today she opens the scorecard app, scrolls through 40+ metrics, tries to remember which ones are guardrails versus North Stars, and either escalates to her DS partner or makes a gut call. With the Detail page, Priya opens a single URL, sees a Copilot recommendation of "Iterate" labeled <em>advisory</em> with three cited guardrail concerns, reviews the structured Guardrail Metrics table (Consumer | Commercial × Retention, Upsell, Engagement), agrees with the rationale, and locks in "Iterate" as her decision in under two minutes. The decision and her free-text rationale are captured against the experiment for audit.</p>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 2 — Reviewer / skip-level triaging across many experiments</div>
+    <div class="narrative">
+      <p>Marcus is a Director reviewing six experiments before a Friday ship review. He has 30 minutes. He opens each Detail page in a tab, scans the header (experiment name + Copilot recommendation chip), looks at the prominent Decision selector to see what the owner is proposing, and reads the Decision Rationale. For two experiments where Copilot says "Stop" but the owner proposed "Ship," he comments and asks the owner to reconcile before the meeting. He never opens the scorecard app — the Detail page gives him everything he needs to triage at the level of the review.</p>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 3 — Auditor / leadership reading rationale months later</div>
+    <div class="narrative">
+      <p>Six months after a controversial ship, a leadership review asks: "Why did we ship this if engagement was flat?" An auditor opens the archived Detail page and reads the locked-in Decision ("Ship"), the Decision Rationale, the completed Guardrail Exception (filled out because Retention was Fail), and the cited guardrail values at the time of decision. The full reasoning is reconstructable in five minutes from a single URL — no email archeology, no scorecard re-derivation, no asking around for context.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 4 — Requirements                     -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 4</div>
+  <h2>Requirements</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:70px">Priority</th>
+        <th style="width:50px">ID</th>
+        <th>Requirement</th>
+        <th style="width:200px">Acceptance Criteria</th>
+        <th style="width:120px">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-01</td>
+        <td>Header displays the experiment name (large, primary) and a Copilot Recommendation chip (smaller, labeled "Copilot recommendation (advisory)") with one of: Ship / Iterate / Stop / Hold</td>
+        <td>Header renders on every Detail page; chip label always reads "advisory"; recommendation values constrained to the four enum options</td>
+        <td>Identity is the experiment, not the recommendation</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-02</td>
+        <td>Copilot Recommendation rationale is structured as three labeled blocks: Pros, Cons, Risks</td>
+        <td>All three sections always render; empty section shows "None identified"; freeform prose is not allowed outside the three labels</td>
+        <td>Forces consistent reasoning shape</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-03</td>
+        <td>Decision UI (Ship / Iterate / Stop / Hold) is the most visually prominent control on the page — larger, higher-contrast, and higher in the layout than the Copilot Recommendation chip</td>
+        <td>In design review, Decision selector measurably dominates the visual hierarchy; usability test confirms users identify Decision before Recommendation</td>
+        <td>Human-owned decision must lead</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-04</td>
+        <td>Decision Rationale is a required free-text field — saving a Decision without rationale is blocked</td>
+        <td>Save action disabled until rationale field is non-empty; minimum length enforced (TBD); inline error messaging on attempted save</td>
+        <td>Auditability anchor</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-05</td>
+        <td>Guardrail Metrics table renders three categories — Retention, Upsell, Engagement, in that order — × two columns (Consumer | Commercial). Empty cells are not allowed; missing metrics show "Not applicable"</td>
+        <td>All three category rows always render; both columns always render; cells with no metric show explicit "Not applicable" text rather than blank space</td>
+        <td>Source §5</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-06</td>
+        <td>Guardrail Exception is a hard gate — if any guardrail = Fail, the "Ship" decision option is disabled until an Exception template (Why acceptable / Mitigation / Followups) is fully completed</td>
+        <td>Ship option is greyed out and unselectable when any guardrail Fails; Exception form expands inline with three required fields; Ship enables only when all three are filled</td>
+        <td>Hard gate — no override in v1</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-07</td>
+        <td>Page reads only from gold/silver layer Expedite data — no external retrieval, no client-side joins to ad-hoc sources</td>
+        <td>Code review confirms data scope; no network calls outside Expedite gold/silver endpoints; security review sign-off</td>
+        <td>Source §10 (Copilot CLI guardrails)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-08</td>
+        <td>Default rendering logic per guardrail category: stat-sig Fails first, then stat-sig Improvements sorted by absolute impact descending; non-stat-sig metrics hidden behind a "Show all (N more)" disclosure</td>
+        <td>Sort order verified per category; non-stat-sig metrics not rendered by default but count is visible; expansion is one click</td>
+        <td>Source §5</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-09</td>
+        <td>Details &amp; Links section surfaces the underlying scorecard, design doc, and telemetry queries — one-click to open the source-of-truth scorecard</td>
+        <td>All three link types render when available; missing links show "Not linked"; scorecard link opens correct scorecard in new tab</td>
+        <td>Source §6</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-10</td>
+        <td>When a metric exists for only one of (Consumer | Commercial), the other column shows "Not applicable" rather than collapsing or leaving the cell empty</td>
+        <td>Renders "Not applicable" placeholder; visually distinct from a missing-data state</td>
+        <td>Source §5 — single-side metric handling</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-11</td>
+        <td>Audit trail / decision history view — show the chronological sequence of decisions and rationales for an experiment</td>
+        <td>Toggleable history panel; entries show timestamp, actor, decision, rationale</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-12</td>
+        <td>Export and share decision rationale (PDF or shareable link) for offline review meetings</td>
+        <td>Export renders header + decision + rationale + guardrail summary; shareable link respects permissions</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-13</td>
+        <td>Per-guardrail commenting — Reviewers can leave a question or note tied to a specific row in the Guardrail Metrics table</td>
+        <td>Comments render inline; threaded; notification to experiment owner</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 5 — Design Direction                 -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 5</div>
+  <h2>Design Direction</h2>
+
+  <h3>UX Flow &amp; Reference</h3>
+  <div class="ux-flow">
+    Existing Detail page (reference for design system, fonts, and colors — to be retained):<br>
+    <a href="https://expedite-web-alpha2.azurewebsites.net/experimentSummary/by_id?featureId=55196efa-f9cc-4556-98e1-83c22189945c&amp;progressionId=574d940d-5740-435d-871e-1a42ecbfb1c1" target="_blank" rel="noopener">expedite-web-alpha2 · experiment summary</a><br><br>
+    Page layout (top to bottom):<br>
+    Header (Experiment name + Copilot recommendation chip · advisory) → <strong>Decision</strong> (largest, most prominent) → Decision Rationale (required free-text) → Guardrail Metrics (Consumer | Commercial × Retention, Upsell, Engagement) → Details &amp; Links → Footer<br><br>
+    <small>Figma: link pending</small>
+  </div>
+
+  <h3>Key Interaction Notes</h3>
+  <ul>
+    <li><strong>Visual hierarchy:</strong> Decision is a primary, full-width selector with high contrast. The Copilot Recommendation is a smaller chip with the explicit "advisory" label. The Decision must measurably dominate — it is the human-owned outcome, and the Recommendation is supporting context.</li>
+    <li><strong>Guardrail Exception gate:</strong> When any guardrail = Fail, the "Ship" option in the Decision selector is disabled and visually muted, with an inline message: "Complete the Guardrail Exception below to enable Ship." The Exception form expands inline; its fields are <em>Why acceptable</em>, <em>Mitigation</em>, and <em>Followups</em>, all required. Ship enables only when all three are non-empty.</li>
+    <li><strong>Guardrail Metrics table:</strong> Retention, Upsell, Engagement render in that order, top to bottom. Each category is a row with two columns (Consumer | Commercial). Within a column, default rendering shows stat-sig Fails first, then stat-sig Improvements sorted by absolute impact descending. Non-stat-sig metrics are collapsed behind "Show all (N more)" with the hidden count always visible.</li>
+    <li><strong>Style retention:</strong> Visual style, fonts, and colors of the existing Expedite alpha page (linked above) are retained. Only the page structure and information hierarchy are new.</li>
+  </ul>
+
+  <h3>Edge Cases &amp; Empty States</h3>
+  <ul>
+    <li><strong>No guardrails defined:</strong> Show "No guardrails configured for this experiment" in each category row; do not collapse the table.</li>
+    <li><strong>All guardrails non-stat-sig:</strong> Collapse rows to a "Show details" state but always render the three category headers so the structure stays predictable.</li>
+    <li><strong>Copilot recommendation unavailable</strong> (computation failure or out of scope): Chip shows "Recommendation unavailable" rather than a stale value; Decision flow continues to function normally.</li>
+    <li><strong>Scorecard data stale</strong> (&gt;72 hours since last refresh): Stale-data banner above the page with the timestamp; Decision can still be saved, with a warning recorded in the rationale audit.</li>
+    <li><strong>Missing single-side metric:</strong> The other column shows "Not applicable" — explicit placeholder, not an empty cell (R-10).</li>
+  </ul>
+
+  <h3>Accessibility</h3>
+  <ul>
+    <li>The Decision selector is keyboard-navigable and announces label, current selection, and disabled state — e.g., "Ship — disabled, complete Guardrail Exception to enable."</li>
+    <li>All guardrail rows are keyboard-traversable; stat-sig markers are conveyed both visually (color) and textually (e.g., "stat-sig fail" announced).</li>
+    <li>Copilot recommendation rationale (Pros / Cons / Risks) is announced as three labeled regions. The "advisory" label is read aloud with the recommendation value.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 6 — Open Questions & Risks           -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 6</div>
+  <h2>Open Questions &amp; Risks</h2>
+
+  <h3>Open Questions</h3>
+  <div class="question-card">
+    <div class="q-title">Q1: How is "stat-sig" threshold defined per metric — single fixed alpha, or per-metric configuration?</div>
+    <p>Default rendering logic (R-08) and the Guardrail Exception gate (R-06) both depend on a clear stat-sig boundary. Need a definitive, documented rule before launch. <strong>Owner:</strong> Data Science.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q2: What is the exact Guardrail Exception template — fields, validation rules, and approval workflow?</div>
+    <p>R-06 specifies <em>Why acceptable / Mitigation / Followups</em> as required, but length minimums, structured tags, linkage to followup work items, and any approval/sign-off step are TBD. <strong>Owner:</strong> PM (David Lydston).</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q3: Who can override the Ship gate, if anyone?</div>
+    <p>v1 treats the Exception gate as hard. Should there be a Director-level override that records the override in the audit trail? Or is "complete the Exception" always the only path? <strong>Owner:</strong> Engineering + Leadership.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q4: Does the "advisory" framing of the Copilot recommendation need legal/compliance review before launch?</div>
+    <p>Recommendation is shown alongside a binding human decision; we should confirm whether the advisory disclaimer is sufficient or whether additional language/positioning is required. <strong>Owner:</strong> PM + Legal.</p>
+  </div>
+
+  <h3>Risks</h3>
+  <div class="risk-card">
+    <div class="risk-title">Risk 1: Over-reliance on the Copilot recommendation despite "advisory" framing</div>
+    <p><strong>Likelihood:</strong> High · <strong>Impact:</strong> High. Owners may rubber-stamp the recommendation without reviewing guardrails — undoing the speed gain by replacing one shortcut (gut feel) with another (Copilot-as-oracle). <strong>Mitigation:</strong> visual hierarchy puts Decision &gt;&gt; Recommendation (R-03); require Decision Rationale before save (R-04); periodic review of rationale-vs-recommendation agreement to detect rubber-stamping.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 2: Guardrail Exception becomes a rubber-stamp</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> High. Owners write "minor regression, ship anyway" with no real mitigation plan, and the gate becomes ceremony rather than protection. <strong>Mitigation:</strong> structured fields (Why acceptable / Mitigation / Followups) all required; followups link to tracked work items; quarterly audit of accepted exceptions; flag exceptions whose followups are never closed.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 3: Default rendering hides important non-stat-sig regressions</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> Medium. A real issue may live just below the stat-sig threshold and never get surfaced because R-08 collapses non-stat-sig metrics by default. <strong>Mitigation:</strong> always show "N hidden" count in each category; one-click expand; quarterly retro on near-miss regressions to validate the threshold logic.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 4: Page performance degrades with large guardrail tables</div>
+    <p><strong>Likelihood:</strong> Low · <strong>Impact:</strong> Medium. Slow load makes triage workflow worse, not better — directly undermining the Detail Page WoW Visit Growth target. <strong>Mitigation:</strong> server-side default rendering; lazy-load expanded rows; perf SLA included in launch criteria.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 5: Decision Rationale is too basic and reduces to "stat-sig says yes"</div>
+    <p><strong>Likelihood:</strong> High · <strong>Impact:</strong> High. If owners write rationales that merely repeat stat-sig results — without capturing what meaningful user/business change the experiment represents — the auditability goal collapses; six months later the rationale tells a future reader nothing new beyond what the scorecard already showed. <strong>Mitigation:</strong> free-text required in v1, but explore structured prompts in v1.1 (e.g., "What user behavior change does this represent?", "What would have changed your decision?"); quarterly review of rationale quality with sampling and feedback to owners.</p>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<div class="footer">
+  Expedite — Experiment Detail Page · Product Specification · IDEAS Experimentation · Last updated May 2026
+</div>
+
+</body>
+</html>
