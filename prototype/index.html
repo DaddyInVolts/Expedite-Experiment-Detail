@@ -841,12 +841,12 @@
       <div class="rec-callout">
         <span class="ico">✓</span>
         <div>
-          <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Failing guardrail (Consumer 7-day retention) gates Ship — see below.
+          <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Ship is available as an override for legal / brand / business reasons — see warning below.
         </div>
       </div>
 
       <div class="gate-callout" id="gateMsg">
-        <span><strong>⛔ Ship is gated.</strong> One guardrail metric is failing (Retention · Consumer · 7-day retention). Complete the Guardrail Exception below to unlock Ship.</span>
+        <span><strong>⛔ Ship is not recommended.</strong> One guardrail metric is failing (Retention · Consumer · 7-day retention, −0.42% stat-sig). You may still ship for legal, brand, or business reasons — document the override below for the audit trail.</span>
       </div>
 
       <div class="collapsible-section open" id="rationaleSection">
@@ -859,11 +859,11 @@
           <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
 
           <div class="exception-form" id="exceptionForm">
-            <h3>⚠ Guardrail Exception — required to enable Ship</h3>
-            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · stat-sig at p=0.003. Complete all three fields to unlock Ship.</div>
+            <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
+            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · stat-sig at p=0.003. Document the override below — all three fields are required for audit.</div>
             <div class="field">
               <label>Why is this acceptable? <span class="req">*</span></label>
-              <textarea id="excAcceptable" placeholder="Explain why this regression does not block ship — context, scope, magnitude relative to user benefit."></textarea>
+              <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
             </div>
             <div class="field">
               <label>Mitigation <span class="req">*</span></label>
@@ -873,7 +873,7 @@
               <label>Followups <span class="req">*</span></label>
               <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
             </div>
-            <div class="exception-status" id="excStatus">3 of 3 fields required · 0 complete</div>
+            <div class="exception-status" id="excStatus">3 of 3 override fields required · 0 complete</div>
           </div>
 
           <div class="save-row">
@@ -1140,26 +1140,16 @@
   const saveStatus = document.getElementById('saveStatus');
 
   function selectDecision(decision) {
-    if (decision === 'Ship' && HAS_FAILING_GUARDRAIL && !exceptionComplete) {
-      gateMsg.classList.add('show');
-      exceptionForm.classList.add('show');
-      document.getElementById('rationaleSection').classList.add('open');
-      opts.forEach(o => {
-        if (o.dataset.decision === 'Ship') o.classList.add('disabled');
-      });
-      updateSaveButton();
-      return;
-    }
     currentDecision = decision;
     opts.forEach(o => {
       o.classList.toggle('selected', o.dataset.decision === decision);
-      if (o.dataset.decision === 'Ship' && HAS_FAILING_GUARDRAIL && !exceptionComplete) {
-        o.classList.add('disabled');
-      } else {
-        o.classList.remove('disabled');
-      }
     });
-    if (decision !== 'Ship') {
+    const showOverrideWarning = (decision === 'Ship' && HAS_FAILING_GUARDRAIL);
+    if (showOverrideWarning) {
+      gateMsg.classList.add('show');
+      exceptionForm.classList.add('show');
+      document.getElementById('rationaleSection').classList.add('open');
+    } else {
       gateMsg.classList.remove('show');
       exceptionForm.classList.remove('show');
     }
@@ -1169,8 +1159,6 @@
   opts.forEach(o => {
     o.addEventListener('click', () => selectDecision(o.dataset.decision));
   });
-
-  document.getElementById('opt-ship').classList.add('disabled');
 
   function updateSaveButton() {
     const hasRationale = rationaleInput.value.trim().length >= 10;
@@ -1193,16 +1181,14 @@
   function checkException() {
     const filled = [excAcceptable, excMitigation, excFollowups]
       .filter(t => t.value.trim().length >= 10).length;
-    excStatus.textContent = `3 of 3 fields required · ${filled} complete`;
+    excStatus.textContent = `3 of 3 override fields required · ${filled} complete`;
     if (filled === 3) {
       excStatus.classList.add('complete');
-      excStatus.textContent = '✓ Exception complete · Ship is now available.';
+      excStatus.textContent = '✓ Override fully documented · audit trail captured.';
       exceptionComplete = true;
-      document.getElementById('opt-ship').classList.remove('disabled');
     } else {
       excStatus.classList.remove('complete');
       exceptionComplete = false;
-      document.getElementById('opt-ship').classList.add('disabled');
     }
   }
   [excAcceptable, excMitigation, excFollowups].forEach(t =>
