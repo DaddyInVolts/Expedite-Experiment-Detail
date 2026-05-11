@@ -89,7 +89,13 @@
     border-radius: 4px;
     padding: 20px 24px;
     margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
   }
+  .exp-header .exp-header-main { flex: 1 1 360px; min-width: 0; }
   .exp-header .breadcrumb {
     font-size: 12px;
     color: var(--text-secondary);
@@ -626,23 +632,18 @@
 
   <!-- R-01 Header -->
   <div class="exp-header">
-    <div class="breadcrumb">
-      <a href="#">Feature: Smart Recap</a> · Progression: <a href="#">Suggested Action Items</a>
-    </div>
-    <h1>Copilot Smart Recap V2 — Suggested Action Items</h1>
-    <div class="feature-line">Experiment ID <code>55196efa-f9cc-4556-98e1-83c22189945c</code> · Step 3 of 4 · Running 14 days · 50% / 50% allocation · Audience: Copilot Pro Commercial + Consumer</div>
-    <div class="header-meta">
-      <div class="meta-item"><strong>Owner</strong> Priya Subramanian</div>
-      <div class="meta-item"><strong>DS Partner</strong> Marcus Hill</div>
-      <div class="meta-item"><strong>Last Refresh</strong> 6 hours ago</div>
-      <div class="meta-item"><strong>Decision Status</strong> <span style="color: var(--warn-amber); font-weight: 600;">Pending</span></div>
-
-      <div class="copilot-rec">
-        <span class="rec-icon">✨</span>
-        <span class="rec-label">Copilot recommendation</span>
-        <span class="rec-value">Iterate</span>
-        <span class="advisory-tag">(advisory)</span>
+    <div class="exp-header-main">
+      <div class="breadcrumb">
+        <a href="#">Feature: Smart Recap</a> · Progression: <a href="#">Suggested Action Items</a>
       </div>
+      <h1>Copilot Smart Recap V2 — Suggested Action Items</h1>
+      <div class="feature-line">Experiment ID <code>55196efa-f9cc-4556-98e1-83c22189945c</code> · Step 3 of 4 · Running 14 days · 50% / 50% allocation · Audience: Copilot Pro Commercial + Consumer</div>
+    </div>
+    <div class="copilot-rec">
+      <span class="rec-icon">✨</span>
+      <span class="rec-label">Copilot recommendation</span>
+      <span class="rec-value">Iterate</span>
+      <span class="advisory-tag">(advisory)</span>
     </div>
   </div>
 
@@ -977,6 +978,25 @@
           <span class="req-tag">R-09</span>
         </div>
         <div class="panel-body">
+          <div class="sidebar-stats">
+            <div class="stat-item">
+              <span class="stat-label">Owner</span>
+              <span class="stat-value">Priya Subramanian</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">DS Partner</span>
+              <span class="stat-value">Marcus Hill</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Last Refresh</span>
+              <span class="stat-value">6 hours ago</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Decision Status</span>
+              <span class="stat-value warn">Pending</span>
+            </div>
+          </div>
+          <div style="margin: 16px 0 8px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 700;">Source links</div>
           <ul class="link-list">
             <li>
               <a href="#">Source-of-truth scorecard ↗</a>
