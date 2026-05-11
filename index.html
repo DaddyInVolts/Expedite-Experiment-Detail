@@ -478,9 +478,9 @@
       <tr>
         <td><span class="badge badge-p0">P0</span></td>
         <td>R-06</td>
-        <td>Guardrail Exception is a hard gate — if any guardrail = Fail, the "Ship" decision option is disabled until an Exception template (Why acceptable / Mitigation / Followups) is fully completed</td>
-        <td>Ship option is greyed out and unselectable when any guardrail Fails; Exception form expands inline with three required fields; Ship enables only when all three are filled</td>
-        <td>Hard gate — no override in v1</td>
+        <td>Guardrail Override — when any guardrail = Fail, the Decision UI surfaces a persistent red "Ship is not recommended" warning and reveals a 3-field Override form (Why acceptable / Mitigation / Followups). Ship remains <em>selectable</em> (legal / brand / business reasons may force a Ship), but the Override is captured with the decision for the audit trail</td>
+        <td>Red warning callout renders whenever Ship is selected with a failing guardrail; Override form (3 required fields) is captured alongside the decision record; Save is gated on the Decision Rationale, not on the Override fields; Override capture is mandatory for downstream audit reports</td>
+        <td>Soft override (was hard-gate in early drafts) — captures audit data without blocking ship</td>
       </tr>
       <tr>
         <td><span class="badge badge-p0">P0</span></td>
@@ -531,6 +531,41 @@
         <td>Comments render inline; threaded; notification to experiment owner</td>
         <td>Post-v1 candidate</td>
       </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-14</td>
+        <td>Page layout is a single-column vertical stack, top-to-bottom: Header → Generative Insights → Decision → Guardrail Metrics (Consumer | Commercial side-by-side) → Experiment Details → Decision History. There is no standalone "Decision Summary" tile</td>
+        <td>No side rail of secondary tiles; Experiment Details (owner, DS partner, dates, metadata chips) renders <em>below</em> Guardrail Metrics, not above the fold; Decision Summary tile does not exist</td>
+        <td>From prototype iteration — keeps the decision-critical content above the fold</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-15</td>
+        <td>Page chrome matches the Expedite alpha shell: top blue app bar (IDEAS Experimentation brand + utility actions), left icon nav rail, light gray page background, white content cards with thin gray borders and 8px corner radius</td>
+        <td>Visual diff against alpha screenshot shows aligned bar height, nav width, background tone, card stroke; theme toggle and avatar render in the top bar</td>
+        <td>Carries the existing app shell so the Detail page feels native to Expedite</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-16</td>
+        <td>Copilot Recommendation rationale (Pros / Cons / Risks per R-02) is presented inside a dedicated "Generative Insights" card with a sparkle icon, the AI-content disclaimer, and a Copilot recommendation pill — collapsible and placed between the Header and the Decision card</td>
+        <td>Card has visible AI disclaimer copy; sparkle/AI iconography is consistent with platform conventions; collapse/expand state persists per user session; rec pill matches R-01 enum</td>
+        <td>Makes "this is AI output, treat as advisory" unmissable</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-17</td>
+        <td>Flat / non-stat-sig metric rows display "0%" in the delta column rather than rendering the underlying near-zero value</td>
+        <td>Every row marked flat / non-stat-sig in the data set renders exactly "0%"; tooltip can still surface the raw observed value for analysts who need it</td>
+        <td>Reduces visual noise; aligns the rendered table with stat-sig semantics (anything not stat-sig is treated as zero impact)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-18</td>
+        <td>Decision-card callout visibility rule: when Ship is selected and a guardrail is failing (R-06 state), the green "current decision matches recommendation" callout is suppressed so the red Override warning is the only callout in view. On any other selection the green callout is restored</td>
+        <td>Inspecting the DOM with Ship selected + failing guardrail shows the green callout hidden; switching to Iterate / Stop / Hold restores it; both callouts never render simultaneously</td>
+        <td>Prevents two competing callouts from fighting for attention</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -546,15 +581,15 @@
   <div class="ux-flow">
     Existing Detail page (reference for design system, fonts, and colors — to be retained):<br>
     <a href="https://expedite-web-alpha2.azurewebsites.net/experimentSummary/by_id?featureId=55196efa-f9cc-4556-98e1-83c22189945c&amp;progressionId=574d940d-5740-435d-871e-1a42ecbfb1c1" target="_blank" rel="noopener">expedite-web-alpha2 · experiment summary</a><br><br>
-    Page layout (top to bottom):<br>
-    Header (Experiment name + Copilot recommendation chip · advisory) → <strong>Decision</strong> (largest, most prominent) → Decision Rationale (required free-text) → Guardrail Metrics (Consumer | Commercial × Retention, Upsell, Engagement) → Details &amp; Links → Footer<br><br>
+    Page layout (single column, top to bottom):<br>
+    App shell (top blue bar + left icon nav rail · R-15) → Header (Experiment name + Copilot recommendation chip · advisory) → <strong>Generative Insights</strong> (Pros / Cons / Risks · collapsible AI card · R-16) → <strong>Decision</strong> (Ship / Iterate / Stop / Hold pills, left-aligned with OWNER DECISION label — largest, most prominent) → Decision Rationale (required free-text) → Guardrail Override form (conditional · R-06) → Guardrail Metrics (Consumer | Commercial × Retention, Upsell, Engagement) → Experiment Details (owner, DS partner, metadata chips · placed below Guardrails · R-14) → Decision History → Footer<br><br>
     <small>Figma: link pending</small>
   </div>
 
   <h3>Key Interaction Notes</h3>
   <ul>
     <li><strong>Visual hierarchy:</strong> Decision is a primary, full-width selector with high contrast. The Copilot Recommendation is a smaller chip with the explicit "advisory" label. The Decision must measurably dominate — it is the human-owned outcome, and the Recommendation is supporting context.</li>
-    <li><strong>Guardrail Exception gate:</strong> When any guardrail = Fail, the "Ship" option in the Decision selector is disabled and visually muted, with an inline message: "Complete the Guardrail Exception below to enable Ship." The Exception form expands inline; its fields are <em>Why acceptable</em>, <em>Mitigation</em>, and <em>Followups</em>, all required. Ship enables only when all three are non-empty.</li>
+    <li><strong>Guardrail Override pattern:</strong> When any guardrail = Fail, the Decision card renders a persistent red callout — "⛔ Ship is not recommended. … document the override below for the audit trail." The Ship pill is still selectable (legal, brand, or business obligations may force a Ship). Selecting Ship opens an inline <em>Guardrail Override</em> form with three required fields — <em>Why acceptable</em>, <em>Mitigation</em>, <em>Followups</em> — captured alongside the decision for audit. Save is gated on Decision Rationale, not on the Override fields. The green "current decision matches recommendation" callout is suppressed in this state (R-18) so only the red warning is visible.</li>
     <li><strong>Guardrail Metrics table:</strong> Retention, Upsell, Engagement render in that order, top to bottom. Each category is a row with two columns (Consumer | Commercial). Within a column, default rendering shows stat-sig Fails first, then stat-sig Improvements sorted by absolute impact descending. Non-stat-sig metrics are collapsed behind "Show all (N more)" with the hidden count always visible.</li>
     <li><strong>Style retention:</strong> Visual style, fonts, and colors of the existing Expedite alpha page (linked above) are retained. Only the page structure and information hierarchy are new.</li>
   </ul>
@@ -570,7 +605,7 @@
 
   <h3>Accessibility</h3>
   <ul>
-    <li>The Decision selector is keyboard-navigable and announces label, current selection, and disabled state — e.g., "Ship — disabled, complete Guardrail Exception to enable."</li>
+    <li>The Decision selector is keyboard-navigable and announces label and current selection — including the override state, e.g., "Ship — selected, guardrail failing, override required."</li>
     <li>All guardrail rows are keyboard-traversable; stat-sig markers are conveyed both visually (color) and textually (e.g., "stat-sig fail" announced).</li>
     <li>Copilot recommendation rationale (Pros / Cons / Risks) is announced as three labeled regions. The "advisory" label is read aloud with the recommendation value.</li>
   </ul>
@@ -586,15 +621,15 @@
   <h3>Open Questions</h3>
   <div class="question-card">
     <div class="q-title">Q1: How is "stat-sig" threshold defined per metric — single fixed alpha, or per-metric configuration?</div>
-    <p>Default rendering logic (R-08) and the Guardrail Exception gate (R-06) both depend on a clear stat-sig boundary. Need a definitive, documented rule before launch. <strong>Owner:</strong> Data Science.</p>
+    <p>Default rendering logic (R-08) and the Guardrail Override warning (R-06) both depend on a clear stat-sig boundary. Need a definitive, documented rule before launch. <strong>Owner:</strong> Data Science.</p>
   </div>
   <div class="question-card">
-    <div class="q-title">Q2: What is the exact Guardrail Exception template — fields, validation rules, and approval workflow?</div>
+    <div class="q-title">Q2: What is the exact Guardrail Override template — fields, validation rules, and approval workflow?</div>
     <p>R-06 specifies <em>Why acceptable / Mitigation / Followups</em> as required, but length minimums, structured tags, linkage to followup work items, and any approval/sign-off step are TBD. <strong>Owner:</strong> PM (David Lydston).</p>
   </div>
   <div class="question-card">
-    <div class="q-title">Q3: Who can override the Ship gate, if anyone?</div>
-    <p>v1 treats the Exception gate as hard. Should there be a Director-level override that records the override in the audit trail? Or is "complete the Exception" always the only path? <strong>Owner:</strong> Engineering + Leadership.</p>
+    <div class="q-title">Q3: Should Ship-overrides require tiered approval, or is owner-only sign-off sufficient?</div>
+    <p>v1 makes the Override a soft gate — anyone can ship by completing the 3-field Override form. Open question: should overrides above a severity threshold (e.g., stat-sig retention regression &gt; 1%) require Director sign-off or a co-signer recorded in the audit trail? <strong>Owner:</strong> Engineering + Leadership.</p>
   </div>
   <div class="question-card">
     <div class="q-title">Q4: Does the "advisory" framing of the Copilot recommendation need legal/compliance review before launch?</div>
@@ -607,8 +642,8 @@
     <p><strong>Likelihood:</strong> High · <strong>Impact:</strong> High. Owners may rubber-stamp the recommendation without reviewing guardrails — undoing the speed gain by replacing one shortcut (gut feel) with another (Copilot-as-oracle). <strong>Mitigation:</strong> visual hierarchy puts Decision &gt;&gt; Recommendation (R-03); require Decision Rationale before save (R-04); periodic review of rationale-vs-recommendation agreement to detect rubber-stamping.</p>
   </div>
   <div class="risk-card">
-    <div class="risk-title">Risk 2: Guardrail Exception becomes a rubber-stamp</div>
-    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> High. Owners write "minor regression, ship anyway" with no real mitigation plan, and the gate becomes ceremony rather than protection. <strong>Mitigation:</strong> structured fields (Why acceptable / Mitigation / Followups) all required; followups link to tracked work items; quarterly audit of accepted exceptions; flag exceptions whose followups are never closed.</p>
+    <div class="risk-title">Risk 2: Guardrail Override becomes a rubber-stamp</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> High. With Ship now selectable as a soft override (R-06), owners may write "minor regression, ship anyway" with no real mitigation plan, and the Override form becomes ceremony rather than protection. <strong>Mitigation:</strong> three structured fields (Why acceptable / Mitigation / Followups) all required; followups link to tracked work items; quarterly audit of accepted overrides; flag overrides whose followups are never closed; consider tiered approval for high-severity overrides (Q3).</p>
   </div>
   <div class="risk-card">
     <div class="risk-title">Risk 3: Default rendering hides important non-stat-sig regressions</div>
