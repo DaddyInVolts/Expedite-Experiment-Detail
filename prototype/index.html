@@ -9,20 +9,23 @@
     --ms-blue: #0078d4;
     --ms-blue-dark: #106ebe;
     --ms-blue-light: #deecf9;
-    --bg: #faf9f8;
+    --bg: #f3f3f3;
     --surface: #ffffff;
-    --text: #201f1e;
-    --text-secondary: #605e5c;
-    --text-tertiary: #a19f9d;
-    --border: #edebe9;
+    --text: #1a1a1a;
+    --text-secondary: #616161;
+    --text-tertiary: #8a8886;
+    --border: #e5e5e5;
     --border-strong: #d2d0ce;
-    --fail-red: #a4262c;
+    --fail-red: #c43e1c;
     --fail-bg: #fde7e9;
-    --warn-amber: #c19c00;
+    --warn-amber: #b88217;
     --warn-bg: #fff4ce;
     --pass-green: #107c10;
     --pass-bg: #dff6dd;
     --neutral-bg: #f3f2f1;
+    --rail-bg: #fafafa;
+    --card-radius: 8px;
+    --link-blue: #0066b8;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,265 +36,425 @@
     color: var(--text);
     line-height: 1.5;
     font-size: 14px;
+    min-height: 100vh;
   }
 
-  /* App bar */
-  .app-bar {
-    background: #2b2b2b;
+  /* ─────── Top bar ─────── */
+  .top-bar {
+    background: var(--ms-blue);
     color: #fff;
-    padding: 10px 24px;
+    height: 56px;
+    padding: 0 24px;
     display: flex;
     align-items: center;
-    gap: 18px;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top-bar .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; font-weight: 600;
+  }
+  .top-bar .brand .logo {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .top-bar .top-actions {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .top-bar .icon-btn {
+    background: transparent; border: none; color: #fff; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .top-bar .icon-btn:hover { background: rgba(255,255,255,0.12); }
+  .top-bar .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px;
+  }
+  .top-bar .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--pass-green); color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* ─────── Layout ─────── */
+  .page-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    min-height: calc(100vh - 56px);
+  }
+  @media (max-width: 880px) { .page-layout { grid-template-columns: 56px 1fr; } .rail-label { display: none !important; } }
+
+  /* ─────── Left rail ─────── */
+  .left-rail {
+    background: var(--rail-bg);
+    border-right: 1px solid var(--border);
+    padding: 8px 0;
+    display: flex; flex-direction: column;
+  }
+  .rail-toggle {
+    background: transparent; border: none; cursor: pointer;
+    width: 44px; height: 40px; margin: 4px 6px 8px;
+    border-radius: 4px; font-size: 16px; color: var(--text-secondary);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .rail-toggle:hover { background: var(--neutral-bg); }
+  .rail-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px;
+    color: var(--text);
+    text-decoration: none;
     font-size: 13px;
-    border-bottom: 1px solid #1f1f1f;
+    border-left: 3px solid transparent;
+    transition: background 0.1s;
   }
-  .app-bar .product { font-weight: 600; letter-spacing: 0.02em; }
-  .app-bar .crumb { color: #c8c6c4; }
-  .app-bar .crumb a { color: #c8c6c4; text-decoration: none; }
-  .app-bar .crumb a:hover { color: #fff; text-decoration: underline; }
-  .app-bar .sep { color: #605e5c; }
-  .app-bar .spacer { flex: 1; }
-  .app-bar .env-tag {
-    background: #c19c00;
-    color: #000;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .rail-item:hover { background: var(--neutral-bg); }
+  .rail-item.active {
+    background: var(--ms-blue-light);
+    border-left-color: var(--ms-blue);
+    color: var(--ms-blue);
+    font-weight: 600;
   }
+  .rail-item .rail-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ─────── Main content ─────── */
+  .main-content {
+    padding: 24px 32px 60px;
+    overflow-x: hidden;
+  }
+  @media (max-width: 600px) { .main-content { padding: 16px; } }
 
   .prototype-banner {
-    background: #fff4ce;
-    border-bottom: 1px solid #f0d878;
-    padding: 8px 24px;
-    font-size: 12px;
-    color: #6b5900;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .prototype-banner a { color: var(--ms-blue); text-decoration: none; font-weight: 600; }
-  .prototype-banner a:hover { text-decoration: underline; }
-
-  .page {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 20px 24px 60px;
-  }
-
-  /* R-01 Header */
-  .exp-header {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .exp-header .exp-header-main { flex: 1 1 360px; min-width: 0; }
-  .exp-header .breadcrumb {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-  }
-  .exp-header .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
-  .exp-header .breadcrumb a:hover { color: var(--ms-blue); text-decoration: underline; }
-  .exp-header h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .exp-header .feature-line {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-  }
-  .exp-header .header-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    align-items: center;
-  }
-  .exp-header .meta-item {
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-  .exp-header .meta-item strong {
-    display: block;
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-tertiary);
-    margin-bottom: 2px;
-    font-weight: 600;
-  }
-
-  .copilot-rec {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--neutral-bg);
-    border: 1px solid var(--border-strong);
+    background: var(--warn-bg);
+    border: 1px solid #f0d878;
     border-radius: 4px;
     padding: 8px 12px;
     font-size: 12px;
+    color: #6b5900;
+    margin-bottom: 16px;
   }
-  .copilot-rec .rec-icon {
-    width: 18px; height: 18px;
-    background: var(--ms-blue);
-    color: #fff;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
-  }
-  .copilot-rec .rec-label {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-weight: 600;
-  }
-  .copilot-rec .rec-value {
-    font-weight: 600;
-    color: var(--text);
-    margin-left: 4px;
-  }
-  .copilot-rec .advisory-tag {
-    color: var(--text-tertiary);
-    font-style: italic;
-    font-size: 11px;
-    margin-left: 4px;
-  }
+  .prototype-banner a { color: var(--link-blue); font-weight: 600; text-decoration: none; }
+  .prototype-banner a:hover { text-decoration: underline; }
 
-  .columns {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    align-items: start;
+  /* ─────── Title block ─────── */
+  .page-title-block { margin-bottom: 18px; }
+  .page-title-block h1 {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    line-height: 1.3; margin-bottom: 6px;
   }
+  .progression-line {
+    font-size: 14px; color: var(--text);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .progression-line .label { color: var(--text-secondary); font-weight: 400; }
+  .description {
+    font-size: 13px; color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 12px;
+    max-width: 1000px;
+  }
+  .variant-chip {
+    display: inline-flex; align-items: center;
+    background: var(--ms-blue-light);
+    color: var(--link-blue);
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .variant-chip strong { font-weight: 600; margin-right: 4px; }
 
-  .panel {
+  /* ─────── Card ─────── */
+  .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: var(--card-radius);
     margin-bottom: 16px;
+    position: relative;
   }
-  .panel-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .card-body { padding: 20px 24px; }
+  .card-header {
+    padding: 16px 24px 12px;
+    display: flex; align-items: center; gap: 10px;
   }
-  .panel-header h2 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
+  .card-header h2 {
+    font-size: 16px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
   }
-  .panel-header .req-tag {
+  .card-header .req-tag {
+    margin-left: auto;
     font-size: 10px;
     color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600;
   }
-  .panel-body { padding: 16px 20px 20px; }
 
-  /* R-03 Decision panel — most prominent */
-  .decision-panel {
-    background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
-    border: 2px solid var(--ms-blue);
-    border-radius: 6px;
-    padding: 20px 24px 22px;
+  /* ─────── Generative Insights collapsible ─────── */
+  .gi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
     margin-bottom: 16px;
-    box-shadow: 0 1px 4px rgba(0, 120, 212, 0.08);
+    overflow: hidden;
   }
-  .decision-panel .label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ms-blue);
-    font-weight: 700;
+  .gi-header {
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .gi-header:hover { background: #fafafa; }
+  .gi-chevron {
+    display: inline-block;
+    transition: transform 0.18s ease;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  .gi-card.open .gi-chevron { transform: rotate(90deg); }
+  .gi-sparkle {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, var(--ms-blue) 0%, #5a4bda 100%);
+    color: #fff; border-radius: 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .gi-title {
+    font-size: 15px; font-weight: 600;
+    color: var(--text);
+  }
+  .gi-disclaimer {
+    font-size: 11px; color: var(--text-tertiary);
+    font-style: italic;
+    margin-left: 6px;
+  }
+  .gi-rec-pill {
+    margin-left: auto;
+    background: var(--neutral-bg);
+    border: 1px solid var(--border-strong);
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .gi-rec-pill .rec-label { color: var(--text-secondary); margin-right: 4px; }
+  .gi-rec-pill .rec-value { font-weight: 700; }
+  .gi-body {
+    border-top: 1px solid var(--border);
+    padding: 18px 24px 20px;
+    display: none;
+  }
+  .gi-card.open .gi-body { display: block; }
+
+  .copilot-rec-callout {
+    background: var(--ms-blue-light);
+    border-left: 3px solid var(--ms-blue);
+    padding: 12px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .copilot-rec-callout strong { color: var(--ms-blue-dark); }
+
+  .pcr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
     margin-bottom: 12px;
   }
-  .decision-options {
+  @media (max-width: 760px) { .pcr-grid { grid-template-columns: 1fr; } }
+  .pcr-block {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    background: #fafafa;
+  }
+  .pcr-block .pcr-label {
+    font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .pcr-block.pros .pcr-label { color: var(--pass-green); }
+  .pcr-block.cons .pcr-label { color: var(--warn-amber); }
+  .pcr-block.risks .pcr-label { color: var(--fail-red); }
+  .pcr-block ul { list-style: none; padding: 0; }
+  .pcr-block li {
+    font-size: 12.5px; color: var(--text-secondary);
+    padding: 4px 0; padding-left: 14px;
+    position: relative; line-height: 1.5;
+  }
+  .pcr-block li::before {
+    content: '•'; position: absolute; left: 2px; top: 4px;
+  }
+  .pcr-block.pros li::before { color: var(--pass-green); }
+  .pcr-block.cons li::before { color: var(--warn-amber); }
+  .pcr-block.risks li::before { color: var(--fail-red); }
+
+  .scope-note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ─────── Metadata card ─────── */
+  .meta-card { position: relative; }
+  .status-pill {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: var(--pass-green);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .meta-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    padding: 24px 24px 14px;
   }
-  .decision-option {
+  @media (max-width: 760px) { .meta-grid { grid-template-columns: 1fr 1fr; } }
+  .meta-cell {
+    padding: 6px 6px;
+  }
+  .meta-cell .meta-icon {
+    color: var(--text-secondary);
+    margin-right: 6px;
+    font-size: 13px;
+  }
+  .meta-cell .meta-key {
+    font-size: 13px; color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .meta-cell .meta-val {
+    font-size: 17px; font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .meta-strip {
+    border-top: 1px solid var(--border);
+    padding: 12px 24px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .meta-kv .k { color: var(--text-secondary); }
+  .meta-kv .v { color: var(--text); font-weight: 600; }
+
+  /* ─────── Decision card ─────── */
+  .decision-card { padding-bottom: 18px; }
+  .decision-card .card-header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .decision-card .card-header h2 .bulb { font-size: 18px; color: var(--warn-amber); }
+  .decision-pills {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-left: auto;
+  }
+  .decision-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--border-strong);
     background: var(--surface);
-    border: 2px solid var(--border-strong);
-    border-radius: 6px;
-    padding: 14px 12px;
-    text-align: center;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.12s ease;
     user-select: none;
+    color: var(--text);
+    transition: all 0.12s;
   }
-  .decision-option:hover:not(.disabled) {
+  .decision-pill:hover:not(.disabled) {
     border-color: var(--ms-blue);
     background: var(--ms-blue-light);
   }
-  .decision-option.selected {
-    border-color: var(--ms-blue);
-    background: var(--ms-blue);
+  .decision-pill.selected {
+    background: var(--pass-green);
     color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+    border-color: var(--pass-green);
   }
-  .decision-option.selected .opt-name { color: #fff; }
-  .decision-option.selected .opt-sub { color: rgba(255,255,255,0.85); }
-  .decision-option.disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
+  .decision-pill.selected .check { display: inline-flex; }
+  .decision-pill .check {
+    display: none;
+    width: 14px; height: 14px;
+    background: rgba(255,255,255,0.25); border-radius: 50%;
+    align-items: center; justify-content: center;
+    font-size: 9px;
+  }
+  .decision-pill.disabled {
+    opacity: 0.45; cursor: not-allowed;
     background: var(--neutral-bg);
   }
-  .decision-option .opt-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    display: block;
-    margin-bottom: 2px;
-  }
-  .decision-option .opt-sub {
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
 
-  .gate-msg {
+  .gate-callout {
+    margin: 16px 24px 0;
     background: var(--fail-bg);
     border-left: 3px solid var(--fail-red);
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    color: var(--fail-red);
+    padding: 12px 14px;
     border-radius: 0 4px 4px 0;
-    display: flex;
+    display: none;
     align-items: center;
     gap: 8px;
-  }
-  .gate-msg .gate-icon { font-weight: 700; }
-
-  .rationale-label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
     color: var(--text);
-    margin-bottom: 6px;
-    display: block;
   }
-  .rationale-label .req { color: var(--fail-red); }
+  .gate-callout.show { display: flex; }
+  .gate-callout strong { color: var(--fail-red); }
+
+  .rec-callout {
+    margin: 16px 24px 0;
+    background: var(--pass-bg);
+    border-left: 3px solid var(--pass-green);
+    padding: 12px 14px;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .rec-callout .ico {
+    background: var(--pass-green); color: #fff;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .rec-callout strong { color: var(--pass-green); }
+
+  .collapsible-section {
+    padding: 14px 24px;
+  }
+  .collapsible-header {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+    padding: 6px 0;
+  }
+  .collapsible-section .gi-chevron { color: var(--text-secondary); }
+  .collapsible-section.open .gi-chevron { transform: rotate(90deg); }
+  .collapsible-section .title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .collapsible-section .req { color: var(--fail-red); margin-left: 2px; }
+  .collapsible-body {
+    display: none;
+    padding-top: 10px;
+  }
+  .collapsible-section.open .collapsible-body { display: block; }
+
   textarea.rationale-input {
     width: 100%;
     min-height: 80px;
@@ -309,21 +472,19 @@
     box-shadow: 0 0 0 1px var(--ms-blue);
   }
   .save-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 12px;
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 12px; margin-top: 12px;
   }
   .save-status {
     font-size: 12px;
     color: var(--text-secondary);
+    margin-right: auto;
   }
   .btn {
     background: var(--ms-blue);
     color: #fff;
     border: none;
-    padding: 8px 18px;
+    padding: 7px 18px;
     border-radius: 3px;
     font-size: 13px;
     font-weight: 600;
@@ -340,42 +501,35 @@
   }
   .btn-secondary:hover:not(:disabled) { background: var(--neutral-bg); }
 
-  /* R-06 Exception form */
+  /* Exception form */
   .exception-form {
     background: #fffaf0;
     border: 1px solid #f0d878;
     border-radius: 4px;
-    padding: 16px 20px;
+    padding: 14px 16px;
     margin-top: 14px;
     display: none;
   }
   .exception-form.show { display: block; }
   .exception-form h3 {
-    font-size: 13px;
-    font-weight: 700;
-    color: #6b5900;
+    font-size: 13px; font-weight: 700; color: #6b5900;
     margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: flex; align-items: center; gap: 6px;
   }
   .exception-form .help-text {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 14px;
+    font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 12px;
   }
-  .exception-form .field { margin-bottom: 12px; }
+  .exception-form .field { margin-bottom: 10px; }
   .exception-form .field label {
     display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 12px; font-weight: 600; color: var(--text);
     margin-bottom: 4px;
   }
   .exception-form .field label .req { color: var(--fail-red); }
   .exception-form .field textarea {
     width: 100%;
-    min-height: 56px;
+    min-height: 50px;
     padding: 8px 10px;
     border: 1px solid var(--border-strong);
     border-radius: 3px;
@@ -389,9 +543,9 @@
     box-shadow: 0 0 0 1px var(--ms-blue);
   }
   .exception-status {
-    margin-top: 10px;
+    margin-top: 8px;
     font-size: 12px;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 3px;
     background: var(--neutral-bg);
     color: var(--text-secondary);
@@ -402,130 +556,114 @@
     font-weight: 600;
   }
 
-  /* R-02 Pros / Cons / Risks */
-  .pcr-grid {
+  /* Supporting evidence */
+  .supporting-evidence {
+    padding: 16px 24px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .supporting-evidence h3 {
+    font-size: 13px; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .evidence-list {
+    list-style: none; padding: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .evidence-list li {
+    font-size: 13px;
+    padding: 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .evidence-list a {
+    color: var(--link-blue);
+    text-decoration: none;
+  }
+  .evidence-list a:hover { text-decoration: underline; }
+  .evidence-list .access-note {
+    color: var(--text-tertiary);
+    font-style: italic;
+    font-size: 11.5px;
+  }
+  .evidence-list .na {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  /* ─────── Legend ─────── */
+  .legend-row {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    padding: 8px 0 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-chip { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-chip .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.fail { background: var(--fail-red); }
+  .dot.improve { background: var(--pass-green); }
+  .dot.flat { background: #d1d1d1; }
+  .dot.warn { background: var(--warn-amber); }
+
+  /* ─────── Metric cards grid ─────── */
+  .metric-cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
   }
-  @media (max-width: 760px) { .pcr-grid { grid-template-columns: 1fr; } }
-  .pcr-block {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 14px;
-    background: var(--bg);
-  }
-  .pcr-block .pcr-label {
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  @media (max-width: 880px) { .metric-cards-grid { grid-template-columns: 1fr; } }
+  .metric-card .card-body { padding: 0; }
+  .category-section { padding: 12px 20px; border-top: 1px solid var(--border); }
+  .category-section:first-child { border-top: none; }
+  .category-label {
+    font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-secondary);
     font-weight: 700;
     margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
-  .pcr-block.pros .pcr-label { color: var(--pass-green); }
-  .pcr-block.cons .pcr-label { color: var(--warn-amber); }
-  .pcr-block.risks .pcr-label { color: var(--fail-red); }
-  .pcr-block ul { list-style: none; padding: 0; }
-  .pcr-block li {
-    font-size: 12.5px;
-    color: var(--text-secondary);
-    padding: 4px 0;
-    line-height: 1.5;
-    position: relative;
-    padding-left: 14px;
-  }
-  .pcr-block li::before {
-    content: '•';
-    position: absolute;
-    left: 2px;
-    top: 4px;
-  }
-  .pcr-block.pros li::before { color: var(--pass-green); }
-  .pcr-block.cons li::before { color: var(--warn-amber); }
-  .pcr-block.risks li::before { color: var(--fail-red); }
-
-  /* R-05 Guardrail Metrics */
-  .guardrail-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .guardrail-table thead th {
-    background: var(--neutral-bg);
-    text-align: left;
-    padding: 10px 14px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-strong);
-  }
-  .guardrail-table tbody tr.category-row td {
-    background: #fafafa;
-    padding: 8px 14px;
-    border-top: 1px solid var(--border);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-    color: var(--text-secondary);
-  }
-  .guardrail-table tbody td.metric-cell {
-    padding: 0;
-    vertical-align: top;
-    border-bottom: 1px solid var(--border);
-    width: 50%;
-  }
-  .metric-cell .cell-inner { padding: 12px 14px; }
-
   .metric-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    gap: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; gap: 10px;
   }
   .metric-row + .metric-row { border-top: 1px dashed var(--border); }
-  .metric-name { font-size: 13px; color: var(--text); flex: 1; }
+  .metric-name {
+    font-size: 13px; color: var(--text); flex: 1;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .metric-name .severity-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .severity-dot.fail { background: var(--fail-red); }
+  .severity-dot.improve { background: var(--pass-green); }
+  .severity-dot.flat { background: #d1d1d1; }
   .metric-delta {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13px; font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
-  .metric-pill {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-left: 6px;
-  }
-  .pill-fail { background: var(--fail-bg); color: var(--fail-red); }
-  .pill-improve { background: var(--pass-bg); color: var(--pass-green); }
-  .pill-flat { background: var(--neutral-bg); color: var(--text-secondary); }
-
   .delta-fail { color: var(--fail-red); }
   .delta-improve { color: var(--pass-green); }
   .delta-flat { color: var(--text-tertiary); }
 
   .show-all-row {
-    margin-top: 8px;
-    padding: 6px 0 0;
+    margin-top: 6px;
+    padding: 4px 0 0;
     border-top: 1px dashed var(--border);
   }
-  .show-all-row a {
+  .show-toggle {
     font-size: 12px;
-    color: var(--ms-blue);
+    color: var(--link-blue);
     text-decoration: none;
     cursor: pointer;
     user-select: none;
   }
-  .show-all-row a:hover { text-decoration: underline; }
-  .non-stat-sig { display: none; opacity: 0.65; }
+  .show-toggle:hover { text-decoration: underline; }
+  .non-stat-sig { display: none; opacity: 0.7; }
   .non-stat-sig.show { display: block; }
 
   .na-cell {
@@ -535,478 +673,437 @@
     padding: 8px 0;
   }
 
-  /* Sidebar */
-  .sidebar .panel-body { padding: 12px 16px 16px; }
-  .link-list { list-style: none; padding: 0; }
-  .link-list li {
-    padding: 8px 0;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .link-list li:first-child { border-top: none; }
-  .link-list a { color: var(--ms-blue); text-decoration: none; }
-  .link-list a:hover { text-decoration: underline; }
-  .link-list .link-meta {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    margin-top: 2px;
-  }
-  .link-list .na {
-    color: var(--text-tertiary);
-    font-style: italic;
-  }
-
-  .sidebar-stats { display: grid; gap: 10px; }
-  .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    padding: 6px 0;
-    border-top: 1px solid var(--border);
-  }
-  .stat-item:first-child { border-top: none; }
-  .stat-item .stat-label { color: var(--text-secondary); }
-  .stat-item .stat-value { font-weight: 600; color: var(--text); }
-  .stat-item .stat-value.warn { color: var(--warn-amber); }
-  .stat-item .stat-value.fail { color: var(--fail-red); }
-  .stat-item .stat-value.pass { color: var(--pass-green); }
-
+  /* ─────── Decision History ─────── */
   .history-list { list-style: none; padding: 0; }
   .history-item {
-    padding: 8px 0;
+    padding: 10px 0;
     border-top: 1px solid var(--border);
-    font-size: 12.5px;
+    font-size: 13px;
+    display: flex; gap: 16px;
   }
-  .history-item:first-child { border-top: none; }
-  .history-item .when { color: var(--text-tertiary); font-size: 11px; }
+  .history-item:first-child { border-top: none; padding-top: 0; }
+  .history-item .when {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
   .history-item .who { font-weight: 600; color: var(--text); }
   .history-item .what { color: var(--text-secondary); }
 
   .toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 24px; right: 24px;
     background: var(--pass-green);
     color: #fff;
     padding: 12px 20px;
     border-radius: 4px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13px; font-weight: 600;
     transform: translateX(120%);
     transition: transform 0.3s ease;
     z-index: 100;
   }
   .toast.show { transform: translateX(0); }
-
-  .scope-banner {
-    background: var(--ms-blue-light);
-    border: 1px solid var(--ms-blue);
-    border-radius: 3px;
-    padding: 8px 12px;
-    font-size: 11.5px;
-    color: var(--ms-blue-dark);
-    margin-top: 12px;
-  }
 </style>
 </head>
 <body>
 
-<div class="app-bar">
-  <span class="product">⬡ Expedite</span>
-  <span class="crumb"><a href="#">Experiments</a></span>
-  <span class="sep">›</span>
-  <span class="crumb"><a href="#">M365 Copilot</a></span>
-  <span class="sep">›</span>
-  <span class="crumb">copilot-smart-recap-v2</span>
-  <span class="spacer"></span>
-  <span class="env-tag">Prototype</span>
-</div>
-
-<div class="prototype-banner">
-  ⓘ This is a clickable prototype with fake data, illustrating the spec at <a href="../">Expedite — Experiment Detail Page</a>. Data, names, and metrics are synthetic.
-</div>
-
-<div class="page">
-
-  <!-- R-01 Header -->
-  <div class="exp-header">
-    <div class="exp-header-main">
-      <div class="breadcrumb">
-        <a href="#">Feature: Smart Recap</a> · Progression: <a href="#">Suggested Action Items</a>
-      </div>
-      <h1>Copilot Smart Recap V2 — Suggested Action Items</h1>
-      <div class="feature-line">Experiment ID <code>55196efa-f9cc-4556-98e1-83c22189945c</code> · Step 3 of 4 · Running 14 days · 50% / 50% allocation · Audience: Copilot Pro Commercial + Consumer</div>
-    </div>
-    <div class="copilot-rec">
-      <span class="rec-icon">✨</span>
-      <span class="rec-label">Copilot recommendation</span>
-      <span class="rec-value">Iterate</span>
-      <span class="advisory-tag">(advisory)</span>
+<!-- Top blue bar -->
+<header class="top-bar">
+  <div class="brand">
+    <span class="logo">⬡</span>
+    <span>IDEAS Experimentation</span>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" title="Theme">🌙</button>
+    <div class="user-chip">
+      <span class="avatar">DL</span>
+      <span>David Lydston</span>
     </div>
   </div>
+</header>
 
-  <div class="columns">
-    <div class="main-col">
+<div class="page-layout">
 
-      <!-- R-03 Decision panel -->
-      <div class="decision-panel" id="decisionPanel">
-        <div class="label">Decision · Human-Owned</div>
-        <div class="decision-options" id="decisionOptions">
-          <div class="decision-option" data-decision="Ship" id="opt-ship">
-            <span class="opt-name">Ship</span>
-            <span class="opt-sub">Promote to all users</span>
+  <!-- Left rail -->
+  <nav class="left-rail">
+    <button class="rail-toggle" title="Collapse">☰</button>
+    <a href="#" class="rail-item"><span class="rail-icon">🏠</span> <span class="rail-label">Home</span></a>
+    <a href="#" class="rail-item active"><span class="rail-icon">◌</span> <span class="rail-label">Copilot Experiment Impact</span></a>
+    <a href="#" class="rail-item"><span class="rail-icon">📖</span> <span class="rail-label">Wiki</span></a>
+    <a href="#" class="rail-item"><span class="rail-icon">📅</span> <span class="rail-label">Office Hours</span></a>
+    <a href="#" class="rail-item"><span class="rail-icon">💬</span> <span class="rail-label">Give Feedback</span></a>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <div class="prototype-banner">
+      ⓘ Clickable prototype with fake data, illustrating the spec at <a href="../">Expedite — Experiment Detail Page</a>. Data, names, and metrics are synthetic.
+    </div>
+
+    <!-- R-01 Title block -->
+    <div class="page-title-block">
+      <h1>Experiment: Copilot Smart Recap V2 — Suggested Action Items</h1>
+      <div class="progression-line"><span class="label">Progression:</span> Suggested Action Items — V2 Smart Recap with PPS &amp; CIQ</div>
+      <p class="description">
+        Suggest follow-up action items at the end of every Copilot chat session (Drafting Agent for paid Copilot users, vanilla BizChat for non-Copilot users). Measures uptake on suggested actions and downstream effect on retention and upsell across Consumer + Commercial.
+      </p>
+      <div class="variant-chip">
+        <strong>Variants:</strong> COPILOT_RECAP_V2_ON vs COPILOT_RECAP_V2_OFF
+      </div>
+    </div>
+
+    <!-- R-02 Generative Insights (collapsible, advisory) -->
+    <div class="gi-card open" id="giCard">
+      <div class="gi-header" onclick="toggleGI()">
+        <span class="gi-chevron">›</span>
+        <span class="gi-sparkle">✨</span>
+        <div>
+          <div><span class="gi-title">Generative Insights</span></div>
+          <div class="gi-disclaimer">AI-generated content may be incorrect</div>
+        </div>
+        <span class="gi-rec-pill">
+          <span class="rec-label">Recommendation</span>
+          <span class="rec-value">Iterate</span>
+        </span>
+      </div>
+      <div class="gi-body">
+        <div class="copilot-rec-callout">
+          <strong>Copilot recommends: Iterate.</strong> The variant moves engagement and upsell positively but one stat-sig retention regression (Consumer 7-day) and weak Consumer engagement suggest more iteration before a full ship. Advisory only — the human owner makes the call.
+        </div>
+        <div class="pcr-grid">
+          <div class="pcr-block pros">
+            <div class="pcr-label">▲ Pros</div>
+            <ul>
+              <li>Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.</li>
+              <li>Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.</li>
+              <li>No regression on the primary North Star metric (chat satisfaction) in either segment.</li>
+            </ul>
           </div>
-          <div class="decision-option selected" data-decision="Iterate" id="opt-iterate">
-            <span class="opt-name">Iterate</span>
-            <span class="opt-sub">Continue with changes</span>
+          <div class="pcr-block cons">
+            <div class="pcr-label">► Cons</div>
+            <ul>
+              <li>Engagement (Consumer) flat — variant did not move the consumer needle as anticipated.</li>
+              <li>Daily session count slightly negative (−0.6%, not stat-sig) on Commercial.</li>
+              <li>Ship-readiness scorecard: 9 of 12 guardrails passing — below the 11/12 historical bar.</li>
+            </ul>
           </div>
-          <div class="decision-option" data-decision="Stop">
-            <span class="opt-name">Stop</span>
-            <span class="opt-sub">End experiment</span>
-          </div>
-          <div class="decision-option" data-decision="Hold">
-            <span class="opt-name">Hold</span>
-            <span class="opt-sub">Pause for review</span>
+          <div class="pcr-block risks">
+            <div class="pcr-label">▼ Risks</div>
+            <ul>
+              <li>7-day retention (Consumer) regression −0.42% is stat-sig and triggers a Fail guardrail — Ship gate engaged.</li>
+              <li>Sample size on Consumer Pro segment is below recommended power (~62%).</li>
+              <li>Holiday seasonality may be inflating Commercial engagement gain.</li>
+            </ul>
           </div>
         </div>
+        <div class="scope-note">R-07 — Computed from Expedite gold/silver-layer data only. No external retrieval.</div>
+      </div>
+    </div>
 
-        <div class="gate-msg" id="gateMsg" style="display: none;">
-          <span class="gate-icon">⛔</span>
-          <span><strong>Ship is gated.</strong> One guardrail metric is failing (Retention · Consumer · 7-day retention). Complete the Guardrail Exception below to unlock Ship.</span>
+    <!-- R-01 Metadata card -->
+    <div class="card meta-card">
+      <div class="status-pill">● Active</div>
+      <div class="meta-grid">
+        <div class="meta-cell">
+          <div class="meta-key"><span class="meta-icon">👥</span> Owner</div>
+          <div class="meta-val">Priya Subramanian</div>
         </div>
-
-        <label class="rationale-label">Decision Rationale <span class="req">*</span> <span style="font-weight: 400; color: var(--text-tertiary); font-size: 11px;">required</span></label>
-        <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
-
-        <div class="exception-form" id="exceptionForm">
-          <h3>⚠ Guardrail Exception — required to enable Ship</h3>
-          <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · stat-sig at p=0.003. Complete all three fields to unlock Ship.</div>
-          <div class="field">
-            <label>Why is this acceptable? <span class="req">*</span></label>
-            <textarea id="excAcceptable" placeholder="Explain why this regression does not block ship — context, scope, magnitude relative to user benefit."></textarea>
-          </div>
-          <div class="field">
-            <label>Mitigation <span class="req">*</span></label>
-            <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
-          </div>
-          <div class="field">
-            <label>Followups <span class="req">*</span></label>
-            <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
-          </div>
-          <div class="exception-status" id="excStatus">3 of 3 fields required · 0 complete</div>
+        <div class="meta-cell">
+          <div class="meta-key"><span class="meta-icon">🧑‍🤝‍🧑</span> Users</div>
+          <div class="meta-val">1,250,402</div>
         </div>
+        <div class="meta-cell">
+          <div class="meta-key"><span class="meta-icon">📅</span> Started</div>
+          <div class="meta-val">4/27/2026</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-key"><span class="meta-icon">🏢</span> Organization</div>
+          <div class="meta-val">M365 Copilot Pro</div>
+        </div>
+      </div>
+      <div class="meta-strip">
+        <span class="meta-kv"><span class="k">Group:</span> <span class="v">m365–copilot–consumer</span></span>
+        <span class="meta-kv"><span class="k">Ring:</span> <span class="v">production</span></span>
+        <span class="meta-kv"><span class="k">Product:</span> <span class="v">M365 Copilot</span></span>
+        <span class="meta-kv"><span class="k">Initiative:</span> <span class="v">Smart Recap</span></span>
+        <span class="meta-kv"><span class="k">Lifecycle:</span> <span class="v">Engagement</span></span>
+        <span class="meta-kv"><span class="k">Scorecard Length:</span> <span class="v">14 days</span></span>
+        <span class="meta-kv"><span class="k">Treatment:</span> <span class="v">50%</span></span>
+        <span class="meta-kv"><span class="k">Control:</span> <span class="v">50%</span></span>
+        <span class="meta-kv"><span class="k">Audience:</span> <span class="v">Consumer + Commercial</span></span>
+        <span class="meta-kv"><span class="k">DS Partner:</span> <span class="v">Marcus Hill</span></span>
+        <span class="meta-kv"><span class="k">Last Refresh:</span> <span class="v">6 hours ago</span></span>
+      </div>
+    </div>
 
-        <div class="save-row">
-          <span class="save-status" id="saveStatus">Decision Rationale required to save.</span>
-          <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
-          <button class="btn" type="button" id="saveBtn" disabled onclick="saveDecision()">Save Decision</button>
+    <!-- R-03 / R-04 / R-06 Decision card -->
+    <div class="card decision-card">
+      <div class="card-header">
+        <h2><span class="bulb">💡</span> Decision</h2>
+        <div class="decision-pills" id="decisionOptions">
+          <div class="decision-pill" data-decision="Ship" id="opt-ship">
+            <span class="check">✓</span> Ship
+          </div>
+          <div class="decision-pill selected" data-decision="Iterate" id="opt-iterate">
+            <span class="check">✓</span> Iterate
+          </div>
+          <div class="decision-pill" data-decision="Stop">
+            <span class="check">✓</span> Stop
+          </div>
+          <div class="decision-pill" data-decision="Hold">
+            <span class="check">✓</span> Hold
+          </div>
         </div>
       </div>
 
-      <!-- R-02 Pros / Cons / Risks -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Copilot Recommendation Rationale</h2>
-          <span class="req-tag">R-02 · Pros / Cons / Risks · Advisory</span>
+      <div class="rec-callout">
+        <span class="ico">✓</span>
+        <div>
+          <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Failing guardrail (Consumer 7-day retention) gates Ship — see below.
         </div>
-        <div class="panel-body">
-          <div class="pcr-grid">
-            <div class="pcr-block pros">
-              <div class="pcr-label">▲ Pros</div>
-              <ul>
-                <li>Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.</li>
-                <li>Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.</li>
-                <li>No regression on the primary North Star metric (chat satisfaction) in either segment.</li>
-              </ul>
+      </div>
+
+      <div class="gate-callout" id="gateMsg">
+        <span><strong>⛔ Ship is gated.</strong> One guardrail metric is failing (Retention · Consumer · 7-day retention). Complete the Guardrail Exception below to unlock Ship.</span>
+      </div>
+
+      <div class="collapsible-section open" id="rationaleSection">
+        <div class="collapsible-header" onclick="toggleSection('rationaleSection')">
+          <span class="gi-chevron">›</span>
+          <span class="title">Decision Rationale <span class="req">*</span></span>
+          <span style="margin-left: auto; font-size: 11px; color: var(--text-tertiary);">required</span>
+        </div>
+        <div class="collapsible-body">
+          <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
+
+          <div class="exception-form" id="exceptionForm">
+            <h3>⚠ Guardrail Exception — required to enable Ship</h3>
+            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · stat-sig at p=0.003. Complete all three fields to unlock Ship.</div>
+            <div class="field">
+              <label>Why is this acceptable? <span class="req">*</span></label>
+              <textarea id="excAcceptable" placeholder="Explain why this regression does not block ship — context, scope, magnitude relative to user benefit."></textarea>
             </div>
-            <div class="pcr-block cons">
-              <div class="pcr-label">► Cons</div>
-              <ul>
-                <li>Engagement (Consumer) flat — variant did not move the consumer needle as anticipated.</li>
-                <li>Daily session count slightly negative (−0.6%, not stat-sig) on Commercial.</li>
-                <li>Ship-readiness scorecard heuristic: 9 of 12 guardrails passing — below the 11/12 historical bar.</li>
-              </ul>
+            <div class="field">
+              <label>Mitigation <span class="req">*</span></label>
+              <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
             </div>
-            <div class="pcr-block risks">
-              <div class="pcr-label">▼ Risks</div>
-              <ul>
-                <li>7-day retention (Consumer) regression of −0.42% is stat-sig and triggers a Fail guardrail — Ship gate triggered.</li>
-                <li>Sample size on Consumer Pro segment is below recommended power (~62%); effect direction may flip with more data.</li>
-                <li>Holiday seasonality may be inflating Commercial engagement gain; 2-week post-period would de-risk.</li>
-              </ul>
+            <div class="field">
+              <label>Followups <span class="req">*</span></label>
+              <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
             </div>
+            <div class="exception-status" id="excStatus">3 of 3 fields required · 0 complete</div>
           </div>
-          <div class="scope-banner">
-            ⓘ R-07 — This recommendation is computed from Expedite gold/silver-layer data only. No external retrieval.
+
+          <div class="save-row">
+            <span class="save-status" id="saveStatus">Decision Rationale required to save.</span>
+            <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
+            <button class="btn" type="button" id="saveBtn" disabled onclick="saveDecision()">Save Decision</button>
           </div>
         </div>
       </div>
 
-      <!-- R-05 Guardrail Metrics -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Guardrail Metrics</h2>
+      <div class="supporting-evidence">
+        <h3>Supporting Evidence</h3>
+        <ul class="evidence-list">
+          <li>🔗 <a href="#">Scorecard ↗</a> <span class="access-note">(Expedite · 12 metrics · refreshed 6h ago)</span></li>
+          <li>🔗 <a href="#">Experiment Portal ↗</a> <span class="access-note">(access may be restricted)</span></li>
+          <li>🔗 <a href="#">PM design doc ↗</a> <span class="access-note">(Smart Recap V2 — Suggested Actions)</span></li>
+          <li>🔗 <a href="#">Telemetry dashboard ↗</a> <span class="access-note">(Geneva · Engagement &amp; Retention)</span></li>
+          <li>📋 <span class="na">Pre-launch eval set — Not linked</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-row">
+      <span class="legend-chip"><span class="dot fail"></span> Stat-sig regression</span>
+      <span class="legend-chip"><span class="dot improve"></span> Stat-sig improvement</span>
+      <span class="legend-chip"><span class="dot flat"></span> Flat / non-stat-sig</span>
+      <span class="legend-chip"><span class="dot warn"></span> Awaiting power</span>
+    </div>
+
+    <!-- R-05 / R-08 / R-10 Metric cards -->
+    <div class="metric-cards-grid">
+
+      <div class="card metric-card">
+        <div class="card-header">
+          <h2>📊 Consumer Guardrails</h2>
           <span class="req-tag">R-05 · R-08 · R-10</span>
         </div>
-        <div class="panel-body" style="padding: 0;">
-          <table class="guardrail-table">
-            <thead>
-              <tr>
-                <th style="width: 50%;">Consumer</th>
-                <th style="width: 50%;">Commercial</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div class="card-body">
 
-              <tr class="category-row"><td colspan="2">▼ Retention</td></tr>
-              <tr>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="metric-row">
-                      <span class="metric-name">7-day retention</span>
-                      <span>
-                        <span class="metric-delta delta-fail">−0.42%</span>
-                        <span class="metric-pill pill-fail">Fail · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="metric-row">
-                      <span class="metric-name">28-day retention</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+0.18%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="show-all-row">
-                      <a class="show-toggle" data-target="ret-c-hidden">▸ Show all (2 more)</a>
-                      <div class="non-stat-sig" id="ret-c-hidden">
-                        <div class="metric-row">
-                          <span class="metric-name">14-day retention</span>
-                          <span><span class="metric-delta delta-flat">−0.08%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Active days per user (30d)</span>
-                          <span><span class="metric-delta delta-flat">+0.05%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="metric-row">
-                      <span class="metric-name">7-day retention</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+0.21%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="metric-row">
-                      <span class="metric-name">28-day retention</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+0.34%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="show-all-row">
-                      <a class="show-toggle" data-target="ret-b-hidden">▸ Show all (3 more)</a>
-                      <div class="non-stat-sig" id="ret-b-hidden">
-                        <div class="metric-row">
-                          <span class="metric-name">14-day retention</span>
-                          <span><span class="metric-delta delta-flat">+0.09%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Tenant active rate</span>
-                          <span><span class="metric-delta delta-flat">+0.03%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Active days per user (30d)</span>
-                          <span><span class="metric-delta delta-flat">−0.04%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="category-row"><td colspan="2">▼ Upsell</td></tr>
-              <tr>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="metric-row">
-                      <span class="metric-name">Copilot Pro upgrade conversion</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+1.82%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="metric-row">
-                      <span class="metric-name">Trial start rate</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+0.74%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="na-cell">Not applicable — Upsell metrics are not tracked for Commercial tenants in this experiment.</div>
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="category-row"><td colspan="2">▼ Engagement</td></tr>
-              <tr>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="metric-row">
-                      <span class="metric-name">Suggested action acceptance rate</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+2.14%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="show-all-row">
-                      <a class="show-toggle" data-target="eng-c-hidden">▸ Show all (4 more)</a>
-                      <div class="non-stat-sig" id="eng-c-hidden">
-                        <div class="metric-row">
-                          <span class="metric-name">Sessions per user / day</span>
-                          <span><span class="metric-delta delta-flat">+0.11%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Messages per session</span>
-                          <span><span class="metric-delta delta-flat">−0.05%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Time-to-first-action</span>
-                          <span><span class="metric-delta delta-flat">−1.2%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Action item completion rate</span>
-                          <span><span class="metric-delta delta-flat">+0.6%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="metric-cell">
-                  <div class="cell-inner">
-                    <div class="metric-row">
-                      <span class="metric-name">Suggested action acceptance rate</span>
-                      <span>
-                        <span class="metric-delta delta-improve">+3.06%</span>
-                        <span class="metric-pill pill-improve">Improve · stat-sig</span>
-                      </span>
-                    </div>
-                    <div class="metric-row">
-                      <span class="metric-name">Daily session count</span>
-                      <span>
-                        <span class="metric-delta delta-flat">−0.62%</span>
-                        <span class="metric-pill pill-flat">Flat</span>
-                      </span>
-                    </div>
-                    <div class="show-all-row">
-                      <a class="show-toggle" data-target="eng-b-hidden">▸ Show all (3 more)</a>
-                      <div class="non-stat-sig" id="eng-b-hidden">
-                        <div class="metric-row">
-                          <span class="metric-name">Messages per session</span>
-                          <span><span class="metric-delta delta-flat">+0.18%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Time-to-first-action</span>
-                          <span><span class="metric-delta delta-flat">−2.1%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                        <div class="metric-row">
-                          <span class="metric-name">Action item completion rate</span>
-                          <span><span class="metric-delta delta-flat">+1.0%</span> <span class="metric-pill pill-flat">Flat</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="sidebar">
-
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Details &amp; Links</h2>
-          <span class="req-tag">R-09</span>
-        </div>
-        <div class="panel-body">
-          <div class="sidebar-stats">
-            <div class="stat-item">
-              <span class="stat-label">Owner</span>
-              <span class="stat-value">Priya Subramanian</span>
+          <div class="category-section">
+            <div class="category-label">▼ Retention</div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot fail"></span> 7-day retention</span>
+              <span class="metric-delta delta-fail">−0.42%</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">DS Partner</span>
-              <span class="stat-value">Marcus Hill</span>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
+              <span class="metric-delta delta-improve">+0.18%</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Last Refresh</span>
-              <span class="stat-value">6 hours ago</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Decision Status</span>
-              <span class="stat-value warn">Pending</span>
+            <div class="show-all-row">
+              <a class="show-toggle" data-target="ret-c-hidden">▸ Show all (2 more)</a>
+              <div class="non-stat-sig" id="ret-c-hidden">
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
+                  <span class="metric-delta delta-flat">−0.08%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
+                  <span class="metric-delta delta-flat">+0.05%</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div style="margin: 16px 0 8px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 700;">Source links</div>
-          <ul class="link-list">
-            <li>
-              <a href="#">Source-of-truth scorecard ↗</a>
-              <div class="link-meta">Expedite · 12 metrics · refreshed 6h ago</div>
-            </li>
-            <li>
-              <a href="#">PM design doc ↗</a>
-              <div class="link-meta">Smart Recap V2 — Suggested Actions</div>
-            </li>
-            <li>
-              <a href="#">Telemetry dashboard ↗</a>
-              <div class="link-meta">Geneva · Engagement &amp; Retention</div>
-            </li>
-            <li>
-              <span class="na">Pre-launch eval set — Not linked</span>
-            </li>
-          </ul>
+
+          <div class="category-section">
+            <div class="category-label">▲ Upsell</div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> Copilot Pro upgrade conversion</span>
+              <span class="metric-delta delta-improve">+1.82%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> Trial start rate</span>
+              <span class="metric-delta delta-improve">+0.74%</span>
+            </div>
+          </div>
+
+          <div class="category-section">
+            <div class="category-label">⚡ Engagement</div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
+              <span class="metric-delta delta-improve">+2.14%</span>
+            </div>
+            <div class="show-all-row">
+              <a class="show-toggle" data-target="eng-c-hidden">▸ Show all (4 more)</a>
+              <div class="non-stat-sig" id="eng-c-hidden">
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Sessions per user / day</span>
+                  <span class="metric-delta delta-flat">+0.11%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
+                  <span class="metric-delta delta-flat">−0.05%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
+                  <span class="metric-delta delta-flat">−1.2%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
+                  <span class="metric-delta delta-flat">+0.6%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Decision History</h2>
-          <span class="req-tag">R-11 · preview</span>
+      <div class="card metric-card">
+        <div class="card-header">
+          <h2>📊 Commercial Guardrails</h2>
+          <span class="req-tag">R-05 · R-08 · R-10</span>
         </div>
-        <div class="panel-body">
-          <ul class="history-list">
-            <li class="history-item">
-              <div class="when">14 days ago</div>
-              <div><span class="who">Priya Subramanian</span> <span class="what">started experiment at 50/50 allocation.</span></div>
-            </li>
-            <li class="history-item">
-              <div class="when">3 days ago</div>
-              <div><span class="who">Marcus Hill (DS)</span> <span class="what">flagged retention regression at 7d.</span></div>
-            </li>
-            <li class="history-item">
-              <div class="when">today</div>
-              <div><span class="who">Copilot</span> <span class="what">generated recommendation: Iterate.</span></div>
-            </li>
-          </ul>
+        <div class="card-body">
+
+          <div class="category-section">
+            <div class="category-label">▼ Retention</div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> 7-day retention</span>
+              <span class="metric-delta delta-improve">+0.21%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
+              <span class="metric-delta delta-improve">+0.34%</span>
+            </div>
+            <div class="show-all-row">
+              <a class="show-toggle" data-target="ret-b-hidden">▸ Show all (3 more)</a>
+              <div class="non-stat-sig" id="ret-b-hidden">
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
+                  <span class="metric-delta delta-flat">+0.09%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Tenant active rate</span>
+                  <span class="metric-delta delta-flat">+0.03%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
+                  <span class="metric-delta delta-flat">−0.04%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-section">
+            <div class="category-label">▲ Upsell</div>
+            <div class="na-cell">Not applicable — Upsell metrics are not tracked for Commercial tenants in this experiment.</div>
+          </div>
+
+          <div class="category-section">
+            <div class="category-label">⚡ Engagement</div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
+              <span class="metric-delta delta-improve">+3.06%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-name"><span class="severity-dot flat"></span> Daily session count</span>
+              <span class="metric-delta delta-flat">−0.62%</span>
+            </div>
+            <div class="show-all-row">
+              <a class="show-toggle" data-target="eng-b-hidden">▸ Show all (3 more)</a>
+              <div class="non-stat-sig" id="eng-b-hidden">
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
+                  <span class="metric-delta delta-flat">+0.18%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
+                  <span class="metric-delta delta-flat">−2.1%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
+                  <span class="metric-delta delta-flat">+1.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
     </div>
-  </div>
+
+    <!-- R-11 Decision History -->
+    <div class="card">
+      <div class="card-header">
+        <h2>🕒 Decision History</h2>
+        <span class="req-tag">R-11 · preview</span>
+      </div>
+      <div class="card-body">
+        <ul class="history-list">
+          <li class="history-item">
+            <div class="when">14 days ago</div>
+            <div><span class="who">Priya Subramanian</span> <span class="what">— started experiment at 50/50 allocation.</span></div>
+          </li>
+          <li class="history-item">
+            <div class="when">3 days ago</div>
+            <div><span class="who">Marcus Hill (DS)</span> <span class="what">— flagged 7-day retention regression in Consumer cohort.</span></div>
+          </li>
+          <li class="history-item">
+            <div class="when">today</div>
+            <div><span class="who">Copilot</span> <span class="what">— generated recommendation: Iterate.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
 </div>
 
 <div class="toast" id="toast">✓ Decision saved.</div>
@@ -1014,25 +1111,23 @@
 <script>
   let currentDecision = 'Iterate';
   let exceptionComplete = false;
+  const HAS_FAILING_GUARDRAIL = true;
 
-  const opts = document.querySelectorAll('.decision-option');
+  const opts = document.querySelectorAll('.decision-pill');
   const gateMsg = document.getElementById('gateMsg');
   const exceptionForm = document.getElementById('exceptionForm');
   const rationaleInput = document.getElementById('rationaleInput');
   const saveBtn = document.getElementById('saveBtn');
   const saveStatus = document.getElementById('saveStatus');
-  const sumDecision = document.getElementById('sumDecision');
-
-  const HAS_FAILING_GUARDRAIL = true;
 
   function selectDecision(decision) {
     if (decision === 'Ship' && HAS_FAILING_GUARDRAIL && !exceptionComplete) {
-      gateMsg.style.display = 'flex';
+      gateMsg.classList.add('show');
       exceptionForm.classList.add('show');
+      document.getElementById('rationaleSection').classList.add('open');
       opts.forEach(o => {
         if (o.dataset.decision === 'Ship') o.classList.add('disabled');
       });
-      updateSummary();
       updateSaveButton();
       return;
     }
@@ -1046,10 +1141,9 @@
       }
     });
     if (decision !== 'Ship') {
-      gateMsg.style.display = 'none';
+      gateMsg.classList.remove('show');
       exceptionForm.classList.remove('show');
     }
-    updateSummary();
     updateSaveButton();
   }
 
@@ -1071,15 +1165,6 @@
     }
   }
   rationaleInput.addEventListener('input', updateSaveButton);
-
-  function updateSummary() {
-    if (!sumDecision) return;
-    sumDecision.textContent = currentDecision;
-    sumDecision.className = 'stat-value ' +
-      (currentDecision === 'Ship' ? 'pass' :
-       currentDecision === 'Stop' ? 'fail' :
-       currentDecision === 'Iterate' ? 'warn' : '');
-  }
 
   const excAcceptable = document.getElementById('excAcceptable');
   const excMitigation = document.getElementById('excMitigation');
@@ -1116,6 +1201,13 @@
     });
   });
 
+  function toggleGI() {
+    document.getElementById('giCard').classList.toggle('open');
+  }
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
   function saveDecision() {
     const toast = document.getElementById('toast');
     toast.textContent = `✓ Decision saved: ${currentDecision} — rationale captured for audit.`;
@@ -1134,7 +1226,6 @@
   }
 
   updateSaveButton();
-  updateSummary();
 </script>
 
 </body>
