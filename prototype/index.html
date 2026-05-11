@@ -358,22 +358,33 @@
   .decision-card { padding-bottom: 18px; }
   .decision-card .card-header {
     border-bottom: 1px solid var(--border);
-    padding: 18px 24px;
+    padding: 18px 24px 14px;
     display: flex; align-items: center; gap: 14px;
     flex-wrap: wrap;
   }
   .decision-card .card-header h2 .bulb { font-size: 18px; color: var(--warn-amber); }
+  .decision-pill-row {
+    padding: 16px 24px 4px;
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .decision-pill-row .pill-label {
+    font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-right: 4px;
+  }
   .decision-pills {
     display: flex; gap: 8px; flex-wrap: wrap;
-    margin-left: auto;
   }
   .decision-pill {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 14px;
+    padding: 8px 18px;
     border: 1px solid var(--border-strong);
     background: var(--surface);
-    border-radius: 16px;
-    font-size: 13px;
+    border-radius: 18px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     user-select: none;
@@ -807,6 +818,10 @@
     <div class="card decision-card">
       <div class="card-header">
         <h2><span class="bulb">💡</span> Decision</h2>
+      </div>
+
+      <div class="decision-pill-row">
+        <span class="pill-label">Owner decision</span>
         <div class="decision-pills" id="decisionOptions">
           <div class="decision-pill" data-decision="Ship" id="opt-ship">
             <span class="check">✓</span> Ship
