@@ -939,41 +939,6 @@
 
       <div class="panel">
         <div class="panel-header">
-          <h2>Decision Summary</h2>
-          <span class="req-tag">at-a-glance</span>
-        </div>
-        <div class="panel-body">
-          <div class="sidebar-stats">
-            <div class="stat-item">
-              <span class="stat-label">Owner proposes</span>
-              <span class="stat-value warn" id="sumDecision">Iterate</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Copilot recommends</span>
-              <span class="stat-value">Iterate <span style="font-weight: 400; color: var(--text-tertiary); font-size: 11px;">(advisory)</span></span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Guardrails passing</span>
-              <span class="stat-value warn">9 of 12</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Stat-sig fails</span>
-              <span class="stat-value fail">1</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Stat-sig improvements</span>
-              <span class="stat-value pass">8</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Exception required for Ship</span>
-              <span class="stat-value fail">Yes</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
           <h2>Details &amp; Links</h2>
           <span class="req-tag">R-09</span>
         </div>
@@ -1108,6 +1073,7 @@
   rationaleInput.addEventListener('input', updateSaveButton);
 
   function updateSummary() {
+    if (!sumDecision) return;
     sumDecision.textContent = currentDecision;
     sumDecision.className = 'stat-value ' +
       (currentDecision === 'Ship' ? 'pass' :
