@@ -838,7 +838,7 @@
         </div>
       </div>
 
-      <div class="rec-callout">
+      <div class="rec-callout" id="recCallout">
         <span class="ico">✓</span>
         <div>
           <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Ship is available as an override for legal / brand / business reasons — see warning below.
@@ -1145,13 +1145,16 @@
       o.classList.toggle('selected', o.dataset.decision === decision);
     });
     const showOverrideWarning = (decision === 'Ship' && HAS_FAILING_GUARDRAIL);
+    const recCallout = document.getElementById('recCallout');
     if (showOverrideWarning) {
       gateMsg.classList.add('show');
       exceptionForm.classList.add('show');
       document.getElementById('rationaleSection').classList.add('open');
+      if (recCallout) recCallout.style.display = 'none';
     } else {
       gateMsg.classList.remove('show');
       exceptionForm.classList.remove('show');
+      if (recCallout) recCallout.style.display = '';
     }
     updateSaveButton();
   }
