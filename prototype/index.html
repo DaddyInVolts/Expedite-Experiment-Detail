@@ -618,6 +618,19 @@
   .dot.improve { background: var(--pass-green); }
   .dot.flat { background: #d1d1d1; }
   .dot.warn { background: var(--warn-amber); }
+  /* R-21 — Significance rule indicator */
+  .sig-rule {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--neutral-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .sig-rule .sig-ico { color: var(--ms-blue); font-weight: 700; }
 
   /* ─────── Metric cards grid ─────── */
   .metric-cards-grid {
@@ -908,7 +921,7 @@
 
           <div class="exception-form" id="exceptionForm">
             <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
-            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · stat-sig at p=0.003. Document the override below — all three fields are required for audit.</div>
+            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · BH-significant at q = 0.012 (FDR ≤ 0.05, family m = 19, R-21). Document the override below — all three fields are required for audit.</div>
             <div class="field">
               <label>Why is this acceptable? <span class="req">*</span></label>
               <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
@@ -950,6 +963,7 @@
       <span class="legend-chip"><span class="dot improve"></span> Stat-sig improvement</span>
       <span class="legend-chip"><span class="dot flat"></span> Flat / non-stat-sig</span>
       <span class="legend-chip"><span class="dot warn"></span> Awaiting power</span>
+      <span class="sig-rule" title="Multi-hypothesis correction across the full guardrail family. R-21."><span class="sig-ico">σ</span> Significance: Benjamini-Hochberg FDR ≤ 0.05 (R-21)</span>
     </div>
 
     <!-- R-05 / R-08 / R-10 Metric cards -->
