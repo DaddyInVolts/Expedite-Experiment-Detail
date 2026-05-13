@@ -656,10 +656,26 @@
   .metric-delta {
     font-size: 13px; font-weight: 600;
     font-variant-numeric: tabular-nums;
+    min-width: 64px; text-align: right;
   }
   .delta-fail { color: var(--fail-red); }
   .delta-improve { color: var(--pass-green); }
   .delta-flat { color: var(--text-tertiary); }
+  /* R-19 — MDE (Minimum Detectable Effect) column. Always rendered black. */
+  .metric-mde {
+    font-size: 13px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #000;
+    min-width: 64px; text-align: right;
+  }
+  .metric-col-headers {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 2px 0 6px; gap: 10px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-tertiary); font-weight: 700;
+  }
+  .metric-col-headers .col-spacer { flex: 1; }
+  .metric-col-headers .col-label { min-width: 64px; text-align: right; }
 
   .show-all-row {
     margin-top: 6px;
@@ -916,13 +932,20 @@
 
           <div class="category-section">
             <div class="category-label">▼ Retention</div>
+            <div class="metric-col-headers" aria-hidden="true">
+              <span class="col-spacer"></span>
+              <span class="col-label">Δ Impact</span>
+              <span class="col-label">MDE</span>
+            </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot fail"></span> 7-day retention</span>
               <span class="metric-delta delta-fail">−0.42%</span>
+              <span class="metric-mde">0.30%</span>
             </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
               <span class="metric-delta delta-improve">+0.18%</span>
+              <span class="metric-mde">0.15%</span>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="ret-c-hidden">▸ Show all (2 more)</a>
@@ -930,10 +953,12 @@
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.25%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.50%</span>
                 </div>
               </div>
             </div>
@@ -941,21 +966,34 @@
 
           <div class="category-section">
             <div class="category-label">▲ Upsell</div>
+            <div class="metric-col-headers" aria-hidden="true">
+              <span class="col-spacer"></span>
+              <span class="col-label">Δ Impact</span>
+              <span class="col-label">MDE</span>
+            </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> Copilot Pro upgrade conversion</span>
               <span class="metric-delta delta-improve">+1.82%</span>
+              <span class="metric-mde">0.80%</span>
             </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> Trial start rate</span>
               <span class="metric-delta delta-improve">+0.74%</span>
+              <span class="metric-mde">0.50%</span>
             </div>
           </div>
 
           <div class="category-section">
             <div class="category-label">⚡ Engagement</div>
+            <div class="metric-col-headers" aria-hidden="true">
+              <span class="col-spacer"></span>
+              <span class="col-label">Δ Impact</span>
+              <span class="col-label">MDE</span>
+            </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
               <span class="metric-delta delta-improve">+2.14%</span>
+              <span class="metric-mde">1.00%</span>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="eng-c-hidden">▸ Show all (4 more)</a>
@@ -963,18 +1001,22 @@
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Sessions per user / day</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">1.20%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.90%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">1.50%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">1.00%</span>
                 </div>
               </div>
             </div>
@@ -992,13 +1034,20 @@
 
           <div class="category-section">
             <div class="category-label">▼ Retention</div>
+            <div class="metric-col-headers" aria-hidden="true">
+              <span class="col-spacer"></span>
+              <span class="col-label">Δ Impact</span>
+              <span class="col-label">MDE</span>
+            </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> 7-day retention</span>
               <span class="metric-delta delta-improve">+0.21%</span>
+              <span class="metric-mde">0.18%</span>
             </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
               <span class="metric-delta delta-improve">+0.34%</span>
+              <span class="metric-mde">0.25%</span>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="ret-b-hidden">▸ Show all (3 more)</a>
@@ -1006,14 +1055,17 @@
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.30%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Tenant active rate</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.40%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.55%</span>
                 </div>
               </div>
             </div>
@@ -1026,13 +1078,20 @@
 
           <div class="category-section">
             <div class="category-label">⚡ Engagement</div>
+            <div class="metric-col-headers" aria-hidden="true">
+              <span class="col-spacer"></span>
+              <span class="col-label">Δ Impact</span>
+              <span class="col-label">MDE</span>
+            </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
               <span class="metric-delta delta-improve">+3.06%</span>
+              <span class="metric-mde">1.10%</span>
             </div>
             <div class="metric-row">
               <span class="metric-name"><span class="severity-dot flat"></span> Daily session count</span>
               <span class="metric-delta delta-flat">0%</span>
+              <span class="metric-mde">1.30%</span>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="eng-b-hidden">▸ Show all (3 more)</a>
@@ -1040,14 +1099,17 @@
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">0.95%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">1.60%</span>
                 </div>
                 <div class="metric-row">
                   <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
                   <span class="metric-delta delta-flat">0%</span>
+                  <span class="metric-mde">1.10%</span>
                 </div>
               </div>
             </div>
