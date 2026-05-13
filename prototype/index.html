@@ -717,6 +717,37 @@
   }
   .history-item .who { font-weight: 600; color: var(--text); }
   .history-item .what { color: var(--text-secondary); }
+  /* R-20 — Override audit-log entry styling */
+  .history-item.override {
+    background: var(--fail-bg);
+    border-left: 3px solid var(--fail-red);
+    padding-left: 10px; margin-left: -10px;
+  }
+  .history-item .override-badge {
+    display: inline-block;
+    background: var(--fail-red); color: #fff;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px;
+    margin-right: 6px; vertical-align: 1px;
+  }
+  .history-item .audit-utc {
+    color: var(--text-tertiary);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+  .history-item .audit-fields {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 2px 10px;
+  }
+  .history-item .audit-fields .k {
+    font-weight: 600; color: var(--text); white-space: nowrap;
+  }
 
   .toast {
     position: fixed;
@@ -1160,11 +1191,11 @@
       </div>
     </div>
 
-    <!-- R-11 Decision History -->
+    <!-- R-11 / R-20 Decision History -->
     <div class="card">
       <div class="card-header">
         <h2>🕒 Decision History</h2>
-        <span class="req-tag">R-11 · preview</span>
+        <span class="req-tag">R-11 · R-20 · preview</span>
       </div>
       <div class="card-body">
         <ul class="history-list">
@@ -1179,6 +1210,29 @@
           <li class="history-item">
             <div class="when">today</div>
             <div><span class="who">Copilot</span> <span class="what">— generated recommendation: Iterate.</span></div>
+          </li>
+          <!-- R-20 example: prior progression override audit-log entry -->
+          <li class="history-item override">
+            <div class="when">
+              30 days ago
+              <div class="audit-utc">2026-04-13T16:42:08Z</div>
+            </div>
+            <div>
+              <div>
+                <span class="override-badge">Override</span>
+                <span class="who">David Lydston</span>
+                <span class="what">— shipped V1 progression against Copilot verdict.</span>
+              </div>
+              <div class="audit-fields">
+                <span class="k">Actor:</span><span>David Lydston &lt;dalyds@microsoft.com&gt;</span>
+                <span class="k">Timestamp (UTC):</span><span>2026-04-13T16:42:08Z</span>
+                <span class="k">Original verdict:</span><span>Iterate (Copilot recommendation at override time)</span>
+                <span class="k">Override decision:</span><span>Ship</span>
+                <span class="k">Why acceptable:</span><span>Build keynote demo dependency — narrow 5% audience, two-week sunset, no upmarket exposure.</span>
+                <span class="k">Mitigation:</span><span>Daily metric review by DS partner; auto-rollback rule on any &gt;1% retention regression.</span>
+                <span class="k">Followups:</span><span>Bug 8423218 — rollback playbook; Workitem 8423219 — re-run with corrected sample size.</span>
+              </div>
+            </div>
           </li>
         </ul>
       </div>

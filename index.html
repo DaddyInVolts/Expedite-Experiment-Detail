@@ -573,6 +573,13 @@
         <td>Every metric row in both Consumer and Commercial cards renders three cells in this order: metric name, delta (impact %), MDE (%); the MDE cell uses color <code>#000</code>; the column appears for stat-sig Fails, stat-sig Improvements, and non-stat-sig rows alike; when MDE is unavailable for a row the cell shows "—" (em dash) rather than collapsing; "Not applicable" cells (R-10) remain unchanged because they have no metric rows</td>
         <td>Lets reviewers judge whether a flat / non-stat-sig result is "truly flat" or "underpowered" at a glance — the delta alone hides the power story</td>
       </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-20</td>
+        <td>Every Guardrail Override of the Ship decision (i.e., Ship saved while one or more guardrails = Fail per R-06) writes an immutable audit-log entry that captures, at minimum: <strong>actor identity</strong> (UPN/email + display name), <strong>UTC timestamp</strong> (ISO 8601 with <code>Z</code> suffix), <strong>original verdict</strong> being overridden (the Copilot recommendation at the moment of override — Stop / Iterate / Hold), and the <strong>three justifications</strong> from R-06 (Why acceptable / Mitigation / Followups). Entries are persisted server-side and surfaced in the Decision History card</td>
+        <td>Every Save of Ship-with-failing-guardrail produces exactly one log entry that conforms to the documented schema (<code>actor</code>, <code>timestampUtc</code>, <code>originalVerdict</code>, <code>justifications</code>); actor equals the authenticated user; timestamp is UTC serialized with the <code>Z</code> suffix; original verdict is frozen at write time (not re-fetched on read); all three justification fields are persisted verbatim and never truncated; the Decision History card renders the entry as a distinct "Override" row exposing all four fields; entries are immutable (edits create a new entry referencing the original) and are queryable by downstream audit reports within 5 minutes of save</td>
+        <td>Tightens R-11 specifically for override events — even though the broader history view is P2, override logging itself ships in v1 because the audit trail is the whole point of allowing soft overrides (R-06)</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -596,7 +603,7 @@
   <h3>Key Interaction Notes</h3>
   <ul>
     <li><strong>Visual hierarchy:</strong> Decision is a primary, full-width selector with high contrast. The Copilot Recommendation is a smaller chip with the explicit "advisory" label. The Decision must measurably dominate — it is the human-owned outcome, and the Recommendation is supporting context.</li>
-    <li><strong>Guardrail Override pattern:</strong> When any guardrail = Fail, the Decision card renders a persistent red callout — "⛔ Ship is not recommended. … document the override below for the audit trail." The Ship pill is still selectable (legal, brand, or business obligations may force a Ship). Selecting Ship opens an inline <em>Guardrail Override</em> form with three required fields — <em>Why acceptable</em>, <em>Mitigation</em>, <em>Followups</em> — captured alongside the decision for audit. Save is gated on Decision Rationale, not on the Override fields. The green "current decision matches recommendation" callout is suppressed in this state (R-18) so only the red warning is visible.</li>
+    <li><strong>Guardrail Override pattern:</strong> When any guardrail = Fail, the Decision card renders a persistent red callout — "⛔ Ship is not recommended. … document the override below for the audit trail." The Ship pill is still selectable (legal, brand, or business obligations may force a Ship). Selecting Ship opens an inline <em>Guardrail Override</em> form with three required fields — <em>Why acceptable</em>, <em>Mitigation</em>, <em>Followups</em> — captured alongside the decision for audit. Save is gated on Decision Rationale, not on the Override fields. The green "current decision matches recommendation" callout is suppressed in this state (R-18) so only the red warning is visible. Every saved override also writes an immutable audit-log entry — actor, UTC timestamp, original Copilot verdict, and the three justifications — surfaced in the Decision History card per R-20.</li>
     <li><strong>Guardrail Metrics table:</strong> Retention, Upsell, Engagement render in that order, top to bottom. Each category is a row with two columns (Consumer | Commercial). Within a column, default rendering shows stat-sig Fails first, then stat-sig Improvements sorted by absolute impact descending. Non-stat-sig metrics are collapsed behind "Show all (N more)" with the hidden count always visible. Every metric row carries an <strong>MDE</strong> (Minimum Detectable Effect) column to the right of the delta — rendered in black so it never competes visually with the red / green / gray delta — so reviewers can tell at a glance whether a flat result is truly flat or simply underpowered (R-19).</li>
     <li><strong>Style retention:</strong> Visual style, fonts, and colors of the existing Expedite alpha page (linked above) are retained. Only the page structure and information hierarchy are new.</li>
   </ul>
@@ -669,7 +676,7 @@
 </div><!-- end .content -->
 
 <div class="footer">
-  Expedite — Experiment Detail Page · Product Specification · IDEAS Experimentation · Last updated May 2026 (R-19 added)
+  Expedite — Experiment Detail Page · Product Specification · IDEAS Experimentation · Last updated May 2026 (R-19, R-20 added)
 </div>
 
 </body>
