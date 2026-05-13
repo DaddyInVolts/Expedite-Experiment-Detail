@@ -899,10 +899,11 @@
       <div class="collapsible-section open" id="rationaleSection">
         <div class="collapsible-header" onclick="toggleSection('rationaleSection')">
           <span class="gi-chevron">›</span>
-          <span class="title">Decision Rationale <span class="req">*</span></span>
-          <span style="margin-left: auto; font-size: 11px; color: var(--text-tertiary);">required</span>
+          <span class="title">Decision Rationale <span class="req" id="rationaleReqMarker">*</span></span>
+          <span style="margin-left: auto; font-size: 11px; color: var(--text-tertiary);" id="rationaleReqLabel">required</span>
         </div>
         <div class="collapsible-body">
+          <div class="help-text" id="rationaleHelp" style="margin-bottom: 8px;">Required only when your decision differs from Copilot's recommendation (R-04).</div>
           <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
 
           <div class="exception-form" id="exceptionForm">
@@ -1247,6 +1248,8 @@
   let currentDecision = 'Iterate';
   let exceptionComplete = false;
   const HAS_FAILING_GUARDRAIL = true;
+  const COPILOT_RECOMMENDATION = 'Iterate'; // R-04 — drives conditional rationale requirement
+  const RECOMMENDATION_AVAILABLE = true;     // R-04 edge case — when false, rationale is always required
 
   const opts = document.querySelectorAll('.decision-pill');
   const gateMsg = document.getElementById('gateMsg');
@@ -1254,6 +1257,15 @@
   const rationaleInput = document.getElementById('rationaleInput');
   const saveBtn = document.getElementById('saveBtn');
   const saveStatus = document.getElementById('saveStatus');
+  const rationaleReqMarker = document.getElementById('rationaleReqMarker');
+  const rationaleReqLabel = document.getElementById('rationaleReqLabel');
+  const rationaleHelp = document.getElementById('rationaleHelp');
+
+  function rationaleRequired() {
+    // R-04: required when Decision diverges from Copilot recommendation,
+    // or when no recommendation is available.
+    return !RECOMMENDATION_AVAILABLE || currentDecision !== COPILOT_RECOMMENDATION;
+  }
 
   function selectDecision(decision) {
     currentDecision = decision;
@@ -1272,6 +1284,7 @@
       exceptionForm.classList.remove('show');
       if (recCallout) recCallout.style.display = '';
     }
+    updateRationaleRequirement();
     updateSaveButton();
   }
 
@@ -1279,18 +1292,41 @@
     o.addEventListener('click', () => selectDecision(o.dataset.decision));
   });
 
+  function updateRationaleRequirement() {
+    const required = rationaleRequired();
+    rationaleReqMarker.style.display = required ? '' : 'none';
+    rationaleReqLabel.textContent = required ? 'required' : 'optional';
+    rationaleReqLabel.style.color = required ? 'var(--fail-red)' : 'var(--text-tertiary)';
+    if (!RECOMMENDATION_AVAILABLE) {
+      rationaleHelp.textContent = 'Copilot recommendation is unavailable — rationale is required for any decision (R-04).';
+    } else if (required) {
+      rationaleHelp.textContent = `Required because your decision (${currentDecision}) differs from Copilot's recommendation (${COPILOT_RECOMMENDATION}) (R-04).`;
+    } else {
+      rationaleHelp.textContent = `Optional — your decision matches Copilot's recommendation (${COPILOT_RECOMMENDATION}). You may still add context (R-04).`;
+    }
+  }
+
   function updateSaveButton() {
+    const required = rationaleRequired();
     const hasRationale = rationaleInput.value.trim().length >= 10;
-    saveBtn.disabled = !hasRationale;
-    if (!hasRationale) {
-      saveStatus.textContent = 'Decision Rationale required to save (min 10 chars).';
+    const ok = !required || hasRationale;
+    saveBtn.disabled = !ok;
+    if (!ok) {
+      saveStatus.textContent = `Rationale required (min 10 chars) — your decision (${currentDecision}) differs from Copilot's recommendation (${COPILOT_RECOMMENDATION}).`;
       saveStatus.style.color = 'var(--text-secondary)';
+    } else if (!required && !hasRationale) {
+      saveStatus.textContent = `Ready to save — rationale optional (decision matches Copilot's recommendation).`;
+      saveStatus.style.color = 'var(--pass-green)';
     } else {
       saveStatus.textContent = 'Ready to save.';
       saveStatus.style.color = 'var(--pass-green)';
     }
   }
   rationaleInput.addEventListener('input', updateSaveButton);
+
+  // Initialize the rationale required/optional state on first render
+  updateRationaleRequirement();
+  updateSaveButton();
 
   const excAcceptable = document.getElementById('excAcceptable');
   const excMitigation = document.getElementById('excMitigation');

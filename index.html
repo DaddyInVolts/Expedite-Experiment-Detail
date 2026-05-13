@@ -464,9 +464,9 @@
       <tr>
         <td><span class="badge badge-p0">P0</span></td>
         <td>R-04</td>
-        <td>Decision Rationale is a required free-text field — saving a Decision without rationale is blocked</td>
-        <td>Save action disabled until rationale field is non-empty; minimum length enforced (TBD); inline error messaging on attempted save</td>
-        <td>Auditability anchor</td>
+        <td>Decision Rationale is a free-text field that is <strong>required only when the saved Decision differs from the active Copilot Recommendation (R-01)</strong>. When the Decision matches the Recommendation, the field remains available but is optional. When the Copilot Recommendation is unavailable (Section 5 edge case), rationale is required for every Decision</td>
+        <td>Save action is enabled with an empty rationale when Decision == Recommendation; Save is disabled with an empty rationale when Decision != Recommendation and inline messaging explains <em>"Rationale is required because your decision differs from Copilot's recommendation"</em>; rationale is also required when the Recommendation is in the unavailable state; switching the Decision selector updates the required/optional state in real time; minimum length enforced when required (TBD)</td>
+        <td>Reduces friction in the agreement path while keeping the audit anchor for divergent decisions. Pairs with R-20: Ship-with-failing-guardrail is always a divergent case (Copilot will not recommend Ship over a failing guardrail), so override events stay fully gated on rationale</td>
       </tr>
       <tr>
         <td><span class="badge badge-p0">P0</span></td>
@@ -596,7 +596,7 @@
     Existing Detail page (reference for design system, fonts, and colors — to be retained):<br>
     <a href="https://expedite-web-alpha2.azurewebsites.net/experimentSummary/by_id?featureId=55196efa-f9cc-4556-98e1-83c22189945c&amp;progressionId=574d940d-5740-435d-871e-1a42ecbfb1c1" target="_blank" rel="noopener">expedite-web-alpha2 · experiment summary</a><br><br>
     Page layout (single column, top to bottom):<br>
-    App shell (top blue bar + left icon nav rail · R-15) → Header (Experiment name + Copilot recommendation chip · advisory) → <strong>Generative Insights</strong> (Pros / Cons / Risks · collapsible AI card · R-16) → <strong>Decision</strong> (Ship / Iterate / Stop / Hold pills, left-aligned with OWNER DECISION label — largest, most prominent) → Decision Rationale (required free-text) → Guardrail Override form (conditional · R-06) → Guardrail Metrics (Consumer | Commercial × Retention, Upsell, Engagement) → Experiment Details (owner, DS partner, metadata chips · placed below Guardrails · R-14) → Decision History → Footer<br><br>
+    App shell (top blue bar + left icon nav rail · R-15) → Header (Experiment name + Copilot recommendation chip · advisory) → <strong>Generative Insights</strong> (Pros / Cons / Risks · collapsible AI card · R-16) → <strong>Decision</strong> (Ship / Iterate / Stop / Hold pills, left-aligned with OWNER DECISION label — largest, most prominent) → Decision Rationale (free-text · required only when Decision diverges from the Copilot recommendation · R-04) → Guardrail Override form (conditional · R-06) → Guardrail Metrics (Consumer | Commercial × Retention, Upsell, Engagement) → Experiment Details (owner, DS partner, metadata chips · placed below Guardrails · R-14) → Decision History → Footer<br><br>
     <small>Figma: link pending</small>
   </div>
 
@@ -653,7 +653,7 @@
   <h3>Risks</h3>
   <div class="risk-card">
     <div class="risk-title">Risk 1: Over-reliance on the Copilot recommendation despite "advisory" framing</div>
-    <p><strong>Likelihood:</strong> High · <strong>Impact:</strong> High. Owners may rubber-stamp the recommendation without reviewing guardrails — undoing the speed gain by replacing one shortcut (gut feel) with another (Copilot-as-oracle). <strong>Mitigation:</strong> visual hierarchy puts Decision &gt;&gt; Recommendation (R-03); require Decision Rationale before save (R-04); periodic review of rationale-vs-recommendation agreement to detect rubber-stamping.</p>
+    <p><strong>Likelihood:</strong> High · <strong>Impact:</strong> High. Owners may rubber-stamp the recommendation without reviewing guardrails — undoing the speed gain by replacing one shortcut (gut feel) with another (Copilot-as-oracle). <strong>Mitigation:</strong> visual hierarchy puts Decision &gt;&gt; Recommendation (R-03); Decision Rationale is required whenever the Decision diverges from the Recommendation (R-04) so every disagreement is audited; for the agreement path — where R-04 no longer forces rationale — quarterly sampling of agreement decisions to spot rubber-stamping (e.g., random audit + DS partner spot-checks); periodic review of rationale-vs-recommendation agreement rates by experiment area to surface owners who never disagree.</p>
   </div>
   <div class="risk-card">
     <div class="risk-title">Risk 2: Guardrail Override becomes a rubber-stamp</div>
@@ -676,7 +676,7 @@
 </div><!-- end .content -->
 
 <div class="footer">
-  Expedite — Experiment Detail Page · Product Specification · IDEAS Experimentation · Last updated May 2026 (R-19, R-20 added)
+  Expedite — Experiment Detail Page · Product Specification · IDEAS Experimentation · Last updated May 2026 (R-04 conditional; R-19, R-20 added)
 </div>
 
 </body>
