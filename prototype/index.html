@@ -654,7 +654,8 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 6px 0; gap: 10px;
   }
-  .metric-row + .metric-row { border-top: 1px dashed var(--border); }
+  .metric-row + .metric-row,
+  .metric-explain-panel + .metric-row { border-top: 1px dashed var(--border); }
   .metric-name {
     font-size: 13px; color: var(--text); flex: 1;
     display: flex; align-items: center; gap: 8px;
@@ -689,6 +690,63 @@
   }
   .metric-col-headers .col-spacer { flex: 1; }
   .metric-col-headers .col-label { min-width: 64px; text-align: right; }
+  .metric-col-headers .col-detail-spacer { width: 22px; flex-shrink: 0; }
+  /* R-22 — per-row decision detail panel ("?" expander) */
+  .metric-explain-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 18px; height: 18px;
+    font-size: 11px; line-height: 1;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-left: 4px;
+    padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .metric-explain-btn:hover {
+    background: var(--neutral-bg);
+    color: var(--text);
+  }
+  .metric-explain-btn[aria-expanded="true"] {
+    background: var(--ms-blue);
+    color: #fff;
+    border-color: var(--ms-blue);
+  }
+  .metric-explain-panel {
+    display: none;
+    background: var(--neutral-bg);
+    border-left: 3px solid var(--ms-blue);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 6px 0 6px 12px;
+    font-size: 12px;
+  }
+  .metric-explain-panel.open { display: block; }
+  .explain-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 3px 14px;
+    margin: 0;
+  }
+  .explain-grid dt {
+    font-weight: 700; color: var(--text-secondary);
+    font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .explain-grid dd {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+  }
+  .explain-grid dd.rule {
+    font-weight: 600;
+    color: var(--text);
+  }
 
   .show-all-row {
     margin-top: 6px;
@@ -982,29 +1040,50 @@
               <span class="col-spacer"></span>
               <span class="col-label">Δ Impact</span>
               <span class="col-label">MDE</span>
+              <span class="col-detail-spacer"></span>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="−0.42%" data-p="0.003" data-q="0.012"
+                 data-ci="[−0.62%, −0.22%]" data-threshold="±0.20%"
+                 data-direction="Higher is better" data-mde="0.30%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in harmful direction → Fail">
               <span class="metric-name"><span class="severity-dot fail"></span> 7-day retention</span>
               <span class="metric-delta delta-fail">−0.42%</span>
               <span class="metric-mde">0.30%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+0.18%" data-p="0.018" data-q="0.038"
+                 data-ci="[+0.04%, +0.32%]" data-threshold="±0.15%"
+                 data-direction="Higher is better" data-mde="0.15%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
               <span class="metric-delta delta-improve">+0.18%</span>
               <span class="metric-mde">0.15%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="ret-c-hidden">▸ Show all (2 more)</a>
               <div class="non-stat-sig" id="ret-c-hidden">
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="0.00%" data-p="0.842" data-q="0.890"
+                     data-ci="[−0.21%, +0.21%]" data-threshold="±0.25%"
+                     data-direction="Higher is better" data-mde="0.25%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.25%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.05%" data-p="0.612" data-q="0.715"
+                     data-ci="[−0.45%, +0.55%]" data-threshold="±0.50%"
+                     data-direction="Higher is better" data-mde="0.50%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.50%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
               </div>
             </div>
@@ -1016,16 +1095,27 @@
               <span class="col-spacer"></span>
               <span class="col-label">Δ Impact</span>
               <span class="col-label">MDE</span>
+              <span class="col-detail-spacer"></span>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+1.82%" data-p="0.0007" data-q="0.005"
+                 data-ci="[+1.05%, +2.59%]" data-threshold="±0.50%"
+                 data-direction="Higher is better" data-mde="0.80%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> Copilot Pro upgrade conversion</span>
               <span class="metric-delta delta-improve">+1.82%</span>
               <span class="metric-mde">0.80%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+0.74%" data-p="0.011" data-q="0.029"
+                 data-ci="[+0.22%, +1.26%]" data-threshold="±0.40%"
+                 data-direction="Higher is better" data-mde="0.50%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> Trial start rate</span>
               <span class="metric-delta delta-improve">+0.74%</span>
               <span class="metric-mde">0.50%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
           </div>
 
@@ -1035,34 +1125,60 @@
               <span class="col-spacer"></span>
               <span class="col-label">Δ Impact</span>
               <span class="col-label">MDE</span>
+              <span class="col-detail-spacer"></span>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+2.14%" data-p="0.0005" data-q="0.005"
+                 data-ci="[+1.32%, +2.96%]" data-threshold="±0.80%"
+                 data-direction="Higher is better" data-mde="1.00%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
               <span class="metric-delta delta-improve">+2.14%</span>
               <span class="metric-mde">1.00%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="eng-c-hidden">▸ Show all (4 more)</a>
               <div class="non-stat-sig" id="eng-c-hidden">
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.10%" data-p="0.732" data-q="0.815"
+                     data-ci="[−1.10%, +1.30%]" data-threshold="±1.00%"
+                     data-direction="Higher is better" data-mde="1.20%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Sessions per user / day</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">1.20%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="−0.05%" data-p="0.821" data-q="0.872"
+                     data-ci="[−0.95%, +0.85%]" data-threshold="±0.80%"
+                     data-direction="Higher is better" data-mde="0.90%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.90%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.20%" data-p="0.654" data-q="0.751"
+                     data-ci="[−1.30%, +1.70%]" data-threshold="±1.00%"
+                     data-direction="Lower is better" data-mde="1.50%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">1.50%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.15%" data-p="0.701" data-q="0.798"
+                     data-ci="[−0.85%, +1.15%]" data-threshold="±0.80%"
+                     data-direction="Higher is better" data-mde="1.00%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">1.00%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
               </div>
             </div>
@@ -1084,34 +1200,60 @@
               <span class="col-spacer"></span>
               <span class="col-label">Δ Impact</span>
               <span class="col-label">MDE</span>
+              <span class="col-detail-spacer"></span>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+0.21%" data-p="0.013" data-q="0.031"
+                 data-ci="[+0.05%, +0.37%]" data-threshold="±0.15%"
+                 data-direction="Higher is better" data-mde="0.18%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> 7-day retention</span>
               <span class="metric-delta delta-improve">+0.21%</span>
               <span class="metric-mde">0.18%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+0.34%" data-p="0.002" data-q="0.011"
+                 data-ci="[+0.16%, +0.52%]" data-threshold="±0.20%"
+                 data-direction="Higher is better" data-mde="0.25%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> 28-day retention</span>
               <span class="metric-delta delta-improve">+0.34%</span>
               <span class="metric-mde">0.25%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="ret-b-hidden">▸ Show all (3 more)</a>
               <div class="non-stat-sig" id="ret-b-hidden">
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.05%" data-p="0.781" data-q="0.852"
+                     data-ci="[−0.25%, +0.35%]" data-threshold="±0.25%"
+                     data-direction="Higher is better" data-mde="0.30%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> 14-day retention</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.30%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="−0.02%" data-p="0.892" data-q="0.921"
+                     data-ci="[−0.42%, +0.38%]" data-threshold="±0.30%"
+                     data-direction="Higher is better" data-mde="0.40%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Tenant active rate</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.40%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.08%" data-p="0.702" data-q="0.798"
+                     data-ci="[−0.47%, +0.63%]" data-threshold="±0.50%"
+                     data-direction="Higher is better" data-mde="0.55%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Active days per user (30d)</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.55%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
               </div>
             </div>
@@ -1128,34 +1270,60 @@
               <span class="col-spacer"></span>
               <span class="col-label">Δ Impact</span>
               <span class="col-label">MDE</span>
+              <span class="col-detail-spacer"></span>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="+3.06%" data-p="0.0001" data-q="0.002"
+                 data-ci="[+2.16%, +3.96%]" data-threshold="±1.00%"
+                 data-direction="Higher is better" data-mde="1.10%"
+                 data-rule="Powered + stat-sig + CI excludes 0 in helpful direction → Improvement">
               <span class="metric-name"><span class="severity-dot improve"></span> Suggested action acceptance rate</span>
               <span class="metric-delta delta-improve">+3.06%</span>
               <span class="metric-mde">1.10%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
-            <div class="metric-row">
+            <div class="metric-row"
+                 data-delta="−0.10%" data-p="0.741" data-q="0.821"
+                 data-ci="[−1.40%, +1.20%]" data-threshold="±1.00%"
+                 data-direction="Higher is better" data-mde="1.30%"
+                 data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
               <span class="metric-name"><span class="severity-dot flat"></span> Daily session count</span>
               <span class="metric-delta delta-flat">0%</span>
               <span class="metric-mde">1.30%</span>
+              <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
             </div>
             <div class="show-all-row">
               <a class="show-toggle" data-target="eng-b-hidden">▸ Show all (3 more)</a>
               <div class="non-stat-sig" id="eng-b-hidden">
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.05%" data-p="0.802" data-q="0.862"
+                     data-ci="[−0.90%, +1.00%]" data-threshold="±0.80%"
+                     data-direction="Higher is better" data-mde="0.95%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Messages per session</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">0.95%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.30%" data-p="0.612" data-q="0.715"
+                     data-ci="[−1.30%, +1.90%]" data-threshold="±1.20%"
+                     data-direction="Lower is better" data-mde="1.60%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Time-to-first-action</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">1.60%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
-                <div class="metric-row">
+                <div class="metric-row"
+                     data-delta="+0.20%" data-p="0.682" data-q="0.778"
+                     data-ci="[−0.90%, +1.30%]" data-threshold="±1.00%"
+                     data-direction="Higher is better" data-mde="1.10%"
+                     data-rule="Powered + non-stat-sig + CI within ±threshold → Safe (flat)">
                   <span class="metric-name"><span class="severity-dot flat"></span> Action item completion rate</span>
                   <span class="metric-delta delta-flat">0%</span>
                   <span class="metric-mde">1.10%</span>
+                  <button type="button" class="metric-explain-btn" aria-expanded="false" aria-label="Show decision detail">?</button>
                 </div>
               </div>
             </div>
@@ -1372,6 +1540,42 @@
       const isShown = target.classList.toggle('show');
       const count = target.querySelectorAll('.metric-row').length;
       t.textContent = isShown ? `▾ Hide non-stat-sig (${count})` : `▸ Show all (${count} more)`;
+    });
+  });
+
+  // R-22 — per-metric "?" expandable decision-detail panel
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+  document.querySelectorAll('.metric-explain-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const row = btn.closest('.metric-row');
+      if (!row) return;
+      let panel = row.nextElementSibling;
+      if (!panel || !panel.classList.contains('metric-explain-panel')) {
+        const d = row.dataset;
+        panel = document.createElement('div');
+        panel.className = 'metric-explain-panel';
+        panel.innerHTML = `
+          <dl class="explain-grid">
+            <dt>Observed Δ</dt><dd>${escapeHtml(d.delta || '—')}</dd>
+            <dt>p-value</dt><dd>${escapeHtml(d.p || '—')}</dd>
+            <dt>BH-adj. q</dt><dd>${escapeHtml(d.q || '—')}</dd>
+            <dt>Relative CI</dt><dd>${escapeHtml(d.ci || '—')}</dd>
+            <dt>Threshold Δ</dt><dd>${escapeHtml(d.threshold || '—')}</dd>
+            <dt>Direction</dt><dd>${escapeHtml(d.direction || '—')}</dd>
+            <dt>MDE</dt><dd>${escapeHtml(d.mde || '—')}</dd>
+            <dt>Decision rule</dt><dd class="rule">${escapeHtml(d.rule || '—')}</dd>
+          </dl>`;
+        row.parentNode.insertBefore(panel, row.nextSibling);
+      }
+      const isOpen = panel.classList.toggle('open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.textContent = isOpen ? '×' : '?';
+      btn.setAttribute('aria-label', isOpen ? 'Hide decision detail' : 'Show decision detail');
     });
   });
 
