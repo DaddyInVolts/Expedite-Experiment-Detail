@@ -172,6 +172,95 @@
   }
   .variant-chip strong { font-weight: 600; margin-right: 4px; }
 
+  /* ─────── Filter bar (R-24) ─────── */
+  .filter-bar {
+    display: flex; flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .filter-pill {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    padding: 5px 12px 5px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
+    white-space: nowrap;
+  }
+  .filter-pill:hover {
+    background: var(--neutral-bg);
+    border-color: var(--text-tertiary);
+  }
+  .filter-pill.open {
+    background: var(--ms-blue-light);
+    border-color: var(--ms-blue);
+    color: var(--ms-blue);
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.18);
+  }
+  .filter-pill .filter-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .filter-pill.open .filter-label { color: var(--ms-blue); }
+  .filter-pill .filter-value {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .filter-pill.open .filter-value { color: var(--ms-blue); }
+  .filter-pill .filter-chevron {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    transition: transform 0.15s ease;
+  }
+  .filter-pill.open .filter-chevron {
+    color: var(--ms-blue);
+    transform: rotate(180deg);
+  }
+  .filter-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 4px 0;
+    z-index: 50;
+  }
+  .filter-pill.open .filter-dropdown { display: block; }
+  .filter-option {
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px;
+  }
+  .filter-option:hover { background: var(--neutral-bg); }
+  .filter-option.selected {
+    background: var(--ms-blue-light);
+    color: var(--ms-blue);
+    font-weight: 600;
+  }
+  .filter-option.selected::after {
+    content: '✓';
+    font-size: 12px;
+    color: var(--ms-blue);
+  }
+
   /* ─────── Card ─────── */
   .card {
     background: var(--surface);
@@ -879,8 +968,66 @@
       <p class="description">
         Suggest follow-up action items at the end of every Copilot chat session (Drafting Agent for paid Copilot users, vanilla BizChat for non-Copilot users). Measures uptake on suggested actions and downstream effect on retention and upsell across Consumer + Commercial.
       </p>
-      <div class="variant-chip">
-        <strong>Variants:</strong> COPILOT_RECAP_V2_ON vs COPILOT_RECAP_V2_OFF
+      <div class="filter-bar" id="filterBar" aria-label="Experiment data filters (R-24)">
+        <div class="filter-pill" data-filter="ring" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="filter-label">Ring:</span>
+          <span class="filter-value">SDF</span>
+          <span class="filter-chevron">▾</span>
+          <div class="filter-dropdown" role="listbox" aria-label="Ring">
+            <div class="filter-option selected" data-value="SDF" role="option" aria-selected="true">SDF</div>
+            <div class="filter-option" data-value="WW" role="option">WW</div>
+            <div class="filter-option" data-value="MSIT" role="option">MSIT</div>
+            <div class="filter-option" data-value="DOD" role="option">DOD</div>
+          </div>
+        </div>
+        <div class="filter-pill" data-filter="audience" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="filter-label">Audience:</span>
+          <span class="filter-value">Any</span>
+          <span class="filter-chevron">▾</span>
+          <div class="filter-dropdown" role="listbox" aria-label="Audience">
+            <div class="filter-option selected" data-value="Any" role="option" aria-selected="true">Any</div>
+            <div class="filter-option" data-value="Commercial" role="option">Commercial</div>
+            <div class="filter-option" data-value="Consumer" role="option">Consumer</div>
+          </div>
+        </div>
+        <div class="filter-pill" data-filter="iteration" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="filter-label">Iteration:</span>
+          <span class="filter-value">100</span>
+          <span class="filter-chevron">▾</span>
+          <div class="filter-dropdown" role="listbox" aria-label="Iteration">
+            <div class="filter-option" data-value="1" role="option">1</div>
+            <div class="filter-option" data-value="5" role="option">5</div>
+            <div class="filter-option" data-value="10" role="option">10</div>
+            <div class="filter-option" data-value="25" role="option">25</div>
+            <div class="filter-option" data-value="50" role="option">50</div>
+            <div class="filter-option selected" data-value="100" role="option" aria-selected="true">100</div>
+          </div>
+        </div>
+        <div class="filter-pill" data-filter="app" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="filter-label">App:</span>
+          <span class="filter-value">All</span>
+          <span class="filter-chevron">▾</span>
+          <div class="filter-dropdown" role="listbox" aria-label="App">
+            <div class="filter-option selected" data-value="All" role="option" aria-selected="true">All</div>
+            <div class="filter-option" data-value="Word" role="option">Word</div>
+            <div class="filter-option" data-value="Excel" role="option">Excel</div>
+            <div class="filter-option" data-value="PowerPoint" role="option">PowerPoint</div>
+            <div class="filter-option" data-value="MCA" role="option">MCA</div>
+            <div class="filter-option" data-value="Teams" role="option">Teams</div>
+            <div class="filter-option" data-value="Outlook Web" role="option">Outlook Web</div>
+            <div class="filter-option" data-value="Outlook Win 32" role="option">Outlook Win 32</div>
+            <div class="filter-option" data-value="Copilot App" role="option">Copilot App</div>
+          </div>
+        </div>
+        <div class="filter-pill" data-filter="variant" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="filter-label">Variant:</span>
+          <span class="filter-value">COPILOT_RECAP_V2_ON</span>
+          <span class="filter-chevron">▾</span>
+          <div class="filter-dropdown" role="listbox" aria-label="Variant">
+            <div class="filter-option selected" data-value="COPILOT_RECAP_V2_ON" role="option" aria-selected="true">COPILOT_RECAP_V2_ON</div>
+            <div class="filter-option" data-value="COPILOT_RECAP_V2_OFF" role="option">COPILOT_RECAP_V2_OFF</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1364,7 +1511,7 @@
         <span class="meta-kv"><span class="k">Ring:</span> <span class="v">production</span></span>
         <span class="meta-kv"><span class="k">Stage:</span> <span class="v">WW</span></span>
         <span class="meta-kv"><span class="k">Iteration:</span> <span class="v">3</span></span>
-        <span class="meta-kv"><span class="k">Product:</span> <span class="v">M365 Copilot</span></span>
+        <span class="meta-kv"><span class="k">App:</span> <span class="v">Copilot App</span></span>
         <span class="meta-kv"><span class="k">Initiative:</span> <span class="v">Smart Recap</span></span>
         <span class="meta-kv"><span class="k">Lifecycle:</span> <span class="v">Engagement</span></span>
         <span class="meta-kv"><span class="k">Scorecard Length:</span> <span class="v">14 days</span></span>
@@ -1587,6 +1734,63 @@
   function toggleSection(id) {
     document.getElementById(id).classList.toggle('open');
   }
+
+  // R-24 — Filter bar: open/close, single-select, outside-click + Esc to close
+  (function initFilterBar() {
+    const pills = document.querySelectorAll('.filter-pill');
+    function closeAll(exceptPill) {
+      pills.forEach(p => {
+        if (p === exceptPill) return;
+        if (p.classList.contains('open')) {
+          p.classList.remove('open');
+          p.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+    pills.forEach(pill => {
+      const valueEl = pill.querySelector('.filter-value');
+      const dropdown = pill.querySelector('.filter-dropdown');
+
+      pill.addEventListener('click', (e) => {
+        if (e.target.closest('.filter-option')) return;
+        const willOpen = !pill.classList.contains('open');
+        closeAll(willOpen ? pill : null);
+        pill.classList.toggle('open', willOpen);
+        pill.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+
+      pill.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (e.target.closest('.filter-option')) return;
+          e.preventDefault();
+          pill.click();
+        }
+      });
+
+      dropdown.querySelectorAll('.filter-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.querySelectorAll('.filter-option').forEach(o => {
+            o.classList.remove('selected');
+            o.removeAttribute('aria-selected');
+          });
+          opt.classList.add('selected');
+          opt.setAttribute('aria-selected', 'true');
+          valueEl.textContent = opt.dataset.value;
+          pill.classList.remove('open');
+          pill.setAttribute('aria-expanded', 'false');
+          pill.focus();
+        });
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.filter-pill')) closeAll(null);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAll(null);
+    });
+  })();
 
   function saveDecision() {
     const toast = document.getElementById('toast');
