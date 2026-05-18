@@ -594,6 +594,13 @@
         <td>"?" button renders on every metric row in both Consumer and Commercial cards (default-visible and "Show all" expanded states alike); clicking the button expands the slim panel inline directly below the row; clicking again (or pressing Esc) collapses it; expanded state is per-row (multiple rows may be expanded simultaneously); the panel's eight fields render in the documented order; numeric fields use tabular-nums and inherit no color from the delta; the decision-rule string is the verbatim, fully resolved rule used by the data layer (no abbreviations, no localization lookups); panel is keyboard-traversable and the button exposes <code>aria-expanded</code>; "Not applicable" cells (R-10) do not render a "?" button because they have no metric row</td>
         <td>Closes the loop on R-19 (MDE column) and R-21 (BH significance) — reviewers can now see <em>why</em> a row was classified the way it was and re-derive the call themselves without leaving the page. Captures the decision rule in the UI so future audits don't depend on tribal knowledge of the data-layer logic</td>
       </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-23</td>
+        <td>Experiment Details card surfaces <strong>Stage</strong> and <strong>Iteration</strong> alongside the other deployment-context fields (Ring, Audience, Treatment, etc.). <em>Stage</em> is a short string identifying the deployment tier (e.g., <code>WW</code>, <code>MSIT</code>, <code>SDF</code>, <code>Frontier</code>); <em>Iteration</em> is a small positive integer starting at 1 indicating which attempt this is within the same hypothesis (typically under a dozen)</td>
+        <td>Both fields render as labeled key/value chips inside the Experiment Details metadata strip, immediately adjacent to Ring; Stage accepts any short alphanumeric string; Iteration is a positive integer; both fields render on every Detail page, with "—" shown when missing</td>
+        <td>Lets owners distinguish ring (deployment population) from stage (release tier) and see at a glance how many times this experiment has iterated before today's decision</td>
+      </tr>
     </tbody>
   </table>
 </div>
