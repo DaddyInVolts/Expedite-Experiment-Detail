@@ -261,6 +261,57 @@
     color: var(--ms-blue);
   }
 
+  /* ─────── Empty-slice state (no scorecard executed) ─────── */
+  .empty-slice-state {
+    display: none;
+    padding: 20px 24px;
+    margin: 4px 0 4px;
+    background: var(--neutral-bg);
+    border: 1px dashed var(--border-strong);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .empty-slice-state strong {
+    display: block;
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .empty-slice-state .empty-ico {
+    display: inline-block;
+    margin-right: 6px;
+    color: var(--text-tertiary);
+    font-size: 16px;
+    vertical-align: -1px;
+  }
+  body.empty-slice .empty-slice-state { display: block; }
+
+  /* Hide populated content when slice is empty */
+  body.empty-slice .gi-body .copilot-rec-callout,
+  body.empty-slice .gi-body .pcr-grid,
+  body.empty-slice .gi-body .scope-note,
+  body.empty-slice .decision-card .decision-pill-row,
+  body.empty-slice .decision-card .rec-callout,
+  body.empty-slice .decision-card .gate-callout,
+  body.empty-slice .decision-card .exception-form,
+  body.empty-slice .decision-card #rationaleSection,
+  body.empty-slice .decision-card .save-row,
+  body.empty-slice .decision-card .supporting-evidence,
+  body.empty-slice .legend-row,
+  body.empty-slice .metric-cards-grid,
+  body.empty-slice .history-list {
+    display: none !important;
+  }
+
+  /* Recommendation pill shows "Unavailable" treatment when empty */
+  body.empty-slice .gi-rec-pill {
+    background: var(--neutral-bg);
+    color: var(--text-tertiary);
+  }
+  body.empty-slice .gi-rec-pill .rec-value { color: var(--text-tertiary); }
+
   /* ─────── Card ─────── */
   .card {
     background: var(--surface);
@@ -971,11 +1022,11 @@
       <div class="filter-bar" id="filterBar" aria-label="Experiment data filters (R-24)">
         <div class="filter-pill" data-filter="ring" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
           <span class="filter-label">Ring:</span>
-          <span class="filter-value">SDF</span>
+          <span class="filter-value">WW</span>
           <span class="filter-chevron">▾</span>
           <div class="filter-dropdown" role="listbox" aria-label="Ring">
-            <div class="filter-option selected" data-value="SDF" role="option" aria-selected="true">SDF</div>
-            <div class="filter-option" data-value="WW" role="option">WW</div>
+            <div class="filter-option" data-value="SDF" role="option">SDF</div>
+            <div class="filter-option selected" data-value="WW" role="option" aria-selected="true">WW</div>
             <div class="filter-option" data-value="MSIT" role="option">MSIT</div>
             <div class="filter-option" data-value="DOD" role="option">DOD</div>
           </div>
@@ -992,15 +1043,19 @@
         </div>
         <div class="filter-pill" data-filter="iteration" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
           <span class="filter-label">Iteration:</span>
-          <span class="filter-value">100</span>
+          <span class="filter-value">10</span>
           <span class="filter-chevron">▾</span>
           <div class="filter-dropdown" role="listbox" aria-label="Iteration">
             <div class="filter-option" data-value="1" role="option">1</div>
+            <div class="filter-option" data-value="2" role="option">2</div>
+            <div class="filter-option" data-value="3" role="option">3</div>
+            <div class="filter-option" data-value="4" role="option">4</div>
             <div class="filter-option" data-value="5" role="option">5</div>
-            <div class="filter-option" data-value="10" role="option">10</div>
-            <div class="filter-option" data-value="25" role="option">25</div>
-            <div class="filter-option" data-value="50" role="option">50</div>
-            <div class="filter-option selected" data-value="100" role="option" aria-selected="true">100</div>
+            <div class="filter-option" data-value="6" role="option">6</div>
+            <div class="filter-option" data-value="7" role="option">7</div>
+            <div class="filter-option" data-value="8" role="option">8</div>
+            <div class="filter-option" data-value="9" role="option">9</div>
+            <div class="filter-option selected" data-value="10" role="option" aria-selected="true">10</div>
           </div>
         </div>
         <div class="filter-pill" data-filter="app" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
@@ -1042,17 +1097,17 @@
         </div>
         <span class="gi-rec-pill">
           <span class="rec-label">Recommendation</span>
-          <span class="rec-value">Iterate</span>
+          <span class="rec-value" id="giRecValue">Iterate</span>
         </span>
       </div>
       <div class="gi-body">
-        <div class="copilot-rec-callout">
+        <div class="copilot-rec-callout" id="recapCallout">
           <strong>Copilot recommends: Iterate.</strong> The variant moves engagement and upsell positively but one stat-sig retention regression (Consumer 7-day) and weak Consumer engagement suggest more iteration before a full ship. Advisory only — the human owner makes the call.
         </div>
         <div class="pcr-grid">
           <div class="pcr-block pros">
             <div class="pcr-label">▲ Pros</div>
-            <ul>
+            <ul id="prosList">
               <li>Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.</li>
               <li>Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.</li>
               <li>No regression on the primary North Star metric (chat satisfaction) in either segment.</li>
@@ -1060,7 +1115,7 @@
           </div>
           <div class="pcr-block cons">
             <div class="pcr-label">► Cons</div>
-            <ul>
+            <ul id="consList">
               <li>Engagement (Consumer) flat — variant did not move the consumer needle as anticipated.</li>
               <li>Daily session count slightly negative (−0.6%, not stat-sig) on Commercial.</li>
               <li>Ship-readiness scorecard: 9 of 12 guardrails passing — below the 11/12 historical bar.</li>
@@ -1068,7 +1123,7 @@
           </div>
           <div class="pcr-block risks">
             <div class="pcr-label">▼ Risks</div>
-            <ul>
+            <ul id="risksList">
               <li>7-day retention (Consumer) regression −0.42% is stat-sig and triggers a Fail guardrail — Ship gate engaged.</li>
               <li>Sample size on Consumer Pro segment is below recommended power (~62%).</li>
               <li>Holiday seasonality may be inflating Commercial engagement gain.</li>
@@ -1076,6 +1131,10 @@
           </div>
         </div>
         <div class="scope-note">R-07 — Computed from Expedite gold/silver-layer data only. No external retrieval.</div>
+        <div class="empty-slice-state">
+          <strong><span class="empty-ico">⊘</span>No scorecard executed for this slice.</strong>
+          <p>No Generative Insights to display. Pick a Ring outside <code>SDF</code>/<code>MSIT</code> and an Iteration not in <code>{1, 3, 5, 7}</code> to view results.</p>
+        </div>
       </div>
     </div>
 
@@ -1105,13 +1164,13 @@
 
       <div class="rec-callout" id="recCallout">
         <span class="ico">✓</span>
-        <div>
+        <div id="recCalloutText">
           <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Ship is available as an override for legal / brand / business reasons — see warning below.
         </div>
       </div>
 
       <div class="gate-callout" id="gateMsg">
-        <span><strong>⛔ Ship is not recommended.</strong> One guardrail metric is failing (Retention · Consumer · 7-day retention, −0.42% stat-sig). You may still ship for legal, brand, or business reasons — document the override below for the audit trail.</span>
+        <span id="gateMsgText"><strong>⛔ Ship is not recommended.</strong> One or more guardrail metrics are failing for this slice. You may still ship for legal, brand, or business reasons — document the override below for the audit trail.</span>
       </div>
 
       <div class="collapsible-section open" id="rationaleSection">
@@ -1160,6 +1219,10 @@
           <li>📋 <span class="na">Pre-launch eval set — Not linked</span></li>
         </ul>
       </div>
+      <div class="empty-slice-state">
+        <strong><span class="empty-ico">⊘</span>No scorecard for this slice — no ship decision can be made.</strong>
+        <p>The Ring/Iteration combination you selected was not flighted, so no scorecard, guardrail metrics, or Copilot recommendation exists. Decision controls are disabled until you pick a slice with executed data.</p>
+      </div>
     </div>
 
     <!-- Legend -->
@@ -1172,6 +1235,10 @@
     </div>
 
     <!-- R-05 / R-08 / R-10 Metric cards -->
+    <div class="empty-slice-state" style="margin-top: 8px;">
+      <strong><span class="empty-ico">⊘</span>No guardrail metrics for this slice.</strong>
+      <p>No scorecard has been executed for the selected Ring × Iteration combination. Guardrail evaluation requires a scorecard run; pick a slice with executed data to view Consumer and Commercial guardrails.</p>
+    </div>
     <div class="metric-cards-grid">
 
       <div class="card metric-card">
@@ -1508,16 +1575,16 @@
       </div>
       <div class="meta-strip">
         <span class="meta-kv"><span class="k">Group:</span> <span class="v">m365–copilot–consumer</span></span>
-        <span class="meta-kv"><span class="k">Ring:</span> <span class="v">production</span></span>
+        <span class="meta-kv"><span class="k">Ring:</span> <span class="v" id="meta-ring">WW</span></span>
         <span class="meta-kv"><span class="k">Stage:</span> <span class="v">WW</span></span>
-        <span class="meta-kv"><span class="k">Iteration:</span> <span class="v">3</span></span>
-        <span class="meta-kv"><span class="k">App:</span> <span class="v">Copilot App</span></span>
+        <span class="meta-kv"><span class="k">Iteration:</span> <span class="v" id="meta-iteration">10</span></span>
+        <span class="meta-kv"><span class="k">App:</span> <span class="v" id="meta-app">Copilot App</span></span>
         <span class="meta-kv"><span class="k">Initiative:</span> <span class="v">Smart Recap</span></span>
         <span class="meta-kv"><span class="k">Lifecycle:</span> <span class="v">Engagement</span></span>
         <span class="meta-kv"><span class="k">Scorecard Length:</span> <span class="v">14 days</span></span>
         <span class="meta-kv"><span class="k">Treatment:</span> <span class="v">50%</span></span>
         <span class="meta-kv"><span class="k">Control:</span> <span class="v">50%</span></span>
-        <span class="meta-kv"><span class="k">Audience:</span> <span class="v">Consumer + Commercial</span></span>
+        <span class="meta-kv"><span class="k">Audience:</span> <span class="v" id="meta-audience">Consumer + Commercial</span></span>
         <span class="meta-kv"><span class="k">DS Partner:</span> <span class="v">Marcus Hill</span></span>
         <span class="meta-kv"><span class="k">Last Refresh:</span> <span class="v">6 hours ago</span></span>
       </div>
@@ -1567,6 +1634,10 @@
             </div>
           </li>
         </ul>
+        <div class="empty-slice-state">
+          <strong><span class="empty-ico">⊘</span>No decision history for this slice.</strong>
+          <p>Decisions are recorded per scorecard. Since no scorecard exists for this Ring × Iteration, there are no historical decisions or overrides to show.</p>
+        </div>
       </div>
     </div>
 
@@ -1578,9 +1649,9 @@
 <script>
   let currentDecision = 'Iterate';
   let exceptionComplete = false;
-  const HAS_FAILING_GUARDRAIL = true;
-  const COPILOT_RECOMMENDATION = 'Iterate'; // R-04 — drives conditional rationale requirement
-  const RECOMMENDATION_AVAILABLE = true;     // R-04 edge case — when false, rationale is always required
+  let HAS_FAILING_GUARDRAIL = true;
+  let COPILOT_RECOMMENDATION = 'Iterate'; // R-04 — drives conditional rationale requirement
+  let RECOMMENDATION_AVAILABLE = true;     // R-04 edge case — when false, rationale is always required
 
   const opts = document.querySelectorAll('.decision-pill');
   const gateMsg = document.getElementById('gateMsg');
@@ -1605,6 +1676,15 @@
     });
     const showOverrideWarning = (decision === 'Ship' && HAS_FAILING_GUARDRAIL);
     const recCallout = document.getElementById('recCallout');
+    const recCalloutText = document.getElementById('recCalloutText');
+    if (recCalloutText && RECOMMENDATION_AVAILABLE) {
+      const matches = decision === COPILOT_RECOMMENDATION;
+      if (matches) {
+        recCalloutText.innerHTML = `<strong>${decision} is the current owner-proposed decision.</strong> The Copilot recommendation also suggests ${decision}. Ship is available as an override for legal / brand / business reasons — see warning below.`;
+      } else {
+        recCalloutText.innerHTML = `<strong>${decision} is the current owner-proposed decision.</strong> Copilot recommends <em>${COPILOT_RECOMMENDATION}</em> for this slice — your decision differs and a rationale is required.`;
+      }
+    }
     if (showOverrideWarning) {
       gateMsg.classList.add('show');
       exceptionForm.classList.add('show');
@@ -1780,6 +1860,7 @@
           pill.classList.remove('open');
           pill.setAttribute('aria-expanded', 'false');
           pill.focus();
+          applySlice();
         });
       });
     });
@@ -1791,6 +1872,207 @@
       if (e.key === 'Escape') closeAll(null);
     });
   })();
+
+  // ─────── Per-slice scorecard simulation ───────
+  // A different filter combination is treated as a different scorecard run.
+  // Empty slices (no scorecard executed): Ring ∈ {SDF, MSIT} or Iteration ∈ {1,3,5,7}.
+  const EMPTY_RINGS = new Set(['SDF', 'MSIT']);
+  const EMPTY_ITERATIONS = new Set(['1', '3', '5', '7']);
+
+  const NARRATIVES = {
+    Ship: {
+      callout: '<strong>Copilot recommends: Ship.</strong> All BH-significant guardrails are net-positive for this slice, retention is non-regressing in both segments, and engagement gains exceed the historical bar. Advisory only — the human owner makes the call.',
+      pros: [
+        'Engagement (Commercial) +3.4% — stat-sig improvement on suggested-action acceptance rate; CI well above zero.',
+        'Upsell (Consumer) Copilot Pro upgrade conversion +2.1%, stat-sig.',
+        '7-day retention non-regressing in both segments; 28-day retention +0.3% (Commercial).'
+      ],
+      cons: [
+        'Sample size on Consumer Pro segment trails Commercial by ~30% — power adequate but not abundant.',
+        'Two engagement sub-metrics are flat (not negative); narrative shows reach without depth gain.'
+      ],
+      risks: [
+        'Holiday seasonality may inflate Commercial engagement gain by ~0.5%.',
+        'No long-tail retention beyond 28 days observed yet — monitor first 30 days post-ship.'
+      ]
+    },
+    Iterate: {
+      callout: '<strong>Copilot recommends: Iterate.</strong> The variant moves engagement and upsell positively but one stat-sig retention regression (Consumer 7-day) and weak Consumer engagement suggest more iteration before a full ship. Advisory only — the human owner makes the call.',
+      pros: [
+        'Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.',
+        'Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.',
+        'No regression on the primary North Star metric (chat satisfaction) in either segment.'
+      ],
+      cons: [
+        'Engagement (Consumer) flat — variant did not move the consumer needle as anticipated.',
+        'Daily session count slightly negative (−0.6%, not stat-sig) on Commercial.',
+        'Ship-readiness scorecard: 9 of 12 guardrails passing — below the 11/12 historical bar.'
+      ],
+      risks: [
+        '7-day retention (Consumer) regression −0.42% is stat-sig and triggers a Fail guardrail — Ship gate engaged.',
+        'Sample size on Consumer Pro segment is below recommended power (~62%).',
+        'Holiday seasonality may be inflating Commercial engagement gain.'
+      ]
+    },
+    Stop: {
+      callout: '<strong>Copilot recommends: Stop.</strong> Multiple stat-sig regressions including primary retention and acceptance rate; the variant is net-harmful for this slice. Advisory only — the human owner makes the call.',
+      pros: [
+        'Two engagement sub-metrics show small directional improvements (not stat-sig).'
+      ],
+      cons: [
+        '7-day retention (Consumer) −0.6% stat-sig regression.',
+        'Suggested action acceptance rate (Commercial) −1.1% stat-sig — opposite of hypothesis.',
+        'Ship-readiness scorecard: 5 of 12 guardrails passing.'
+      ],
+      risks: [
+        'Continuing the experiment risks compounding retention loss in the affected ring.',
+        'No mitigation path identified that preserves the engagement objective.',
+        'Override (Ship) is strongly discouraged for this slice.'
+      ]
+    },
+    Hold: {
+      callout: '<strong>Copilot recommends: Hold.</strong> Scorecard is underpowered for this slice — most guardrails report MDE wider than observed deltas. Defer the decision until more data accumulates. Advisory only — the human owner makes the call.',
+      pros: [
+        'Directional signals are mixed-to-positive; nothing in the data argues for Stop.'
+      ],
+      cons: [
+        'Sample size on the selected slice is ~45% of the powered target.',
+        'Most stat-sig flags are absent — observed deltas fall within MDE windows.',
+        'Retention CIs are wide enough to include both regression and improvement.'
+      ],
+      risks: [
+        'Shipping now risks acting on noise; stopping now risks discarding a real but small effect.',
+        'Recommend extending the scorecard window by 7 days or expanding the ring.'
+      ]
+    }
+  };
+
+  function getCurrentFilters() {
+    const f = {};
+    document.querySelectorAll('.filter-pill').forEach(p => {
+      f[p.dataset.filter] = p.querySelector('.filter-value').textContent.trim();
+    });
+    return f;
+  }
+
+  function isEmptySlice(f) {
+    return EMPTY_RINGS.has(f.ring) || EMPTY_ITERATIONS.has(f.iteration);
+  }
+
+  function hashSlice(f) {
+    const key = `${f.ring}|${f.audience}|${f.iteration}|${f.app}|${f.variant}`;
+    let h = 0;
+    for (let i = 0; i < key.length; i++) {
+      h = ((h << 5) - h + key.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  function parseBaseDelta(row) {
+    if (row.dataset.baseDelta !== undefined) return parseFloat(row.dataset.baseDelta);
+    const raw = (row.dataset.delta || '0').replace('−', '-').replace('%', '').trim();
+    const v = parseFloat(raw);
+    row.dataset.baseDelta = isNaN(v) ? 0 : v;
+    return row.dataset.baseDelta;
+  }
+
+  function formatDelta(v) {
+    const r = Math.round(v * 100) / 100;
+    if (r === 0) return '0%';
+    const abs = Math.abs(r).toFixed(2);
+    return (r < 0 ? '−' : '+') + abs + '%';
+  }
+
+  function shiftMetricDeltas(hash) {
+    document.querySelectorAll('.metric-row').forEach((row, idx) => {
+      const base = parseBaseDelta(row);
+      // Per-row deterministic offset in [-0.45, +0.45]% from base
+      const seed = (hash + idx * 2654435761) >>> 0;
+      const offset = (((seed % 91) - 45) / 100);
+      const newVal = base + offset;
+      const formatted = formatDelta(newVal);
+      row.dataset.delta = formatted;
+      const span = row.querySelector('.metric-delta');
+      if (span) span.textContent = formatted;
+      // Refresh any open explain panel so it reflects the new delta
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains('metric-explain-panel')) {
+        const firstDd = next.querySelector('dd');
+        if (firstDd) firstDd.textContent = formatted;
+      }
+    });
+  }
+
+  function pickRecommendation(hash) {
+    const RECS = ['Ship', 'Stop', 'Hold', 'Iterate'];
+    return RECS[hash % RECS.length];
+  }
+
+  function renderList(ul, items) {
+    if (!ul) return;
+    ul.innerHTML = items.map(t => `<li>${t}</li>`).join('');
+  }
+
+  function setMetaIfExists(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function applySlice() {
+    const f = getCurrentFilters();
+    const empty = isEmptySlice(f);
+
+    // Keep meta-strip in sync with the slice the user is viewing
+    setMetaIfExists('meta-ring', f.ring);
+    setMetaIfExists('meta-iteration', f.iteration);
+    setMetaIfExists('meta-app', f.app === 'All' ? 'All apps' : f.app);
+    setMetaIfExists('meta-audience', f.audience === 'Any' ? 'Any (Consumer + Commercial)' : f.audience);
+
+    document.body.classList.toggle('empty-slice', empty);
+
+    const recValueEl = document.getElementById('giRecValue');
+
+    if (empty) {
+      RECOMMENDATION_AVAILABLE = false;
+      COPILOT_RECOMMENDATION = null;
+      HAS_FAILING_GUARDRAIL = false;
+      if (recValueEl) recValueEl.textContent = 'Unavailable';
+      if (saveBtn) saveBtn.disabled = true;
+      if (saveStatus) {
+        saveStatus.textContent = 'No scorecard for this slice — Save disabled.';
+        saveStatus.style.color = 'var(--text-secondary)';
+      }
+      // Close any open metric-explain panel since rows are hidden
+      document.querySelectorAll('.metric-explain-panel.open').forEach(p => p.classList.remove('open'));
+      document.querySelectorAll('.metric-explain-btn[aria-expanded="true"]').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.textContent = '?';
+      });
+      return;
+    }
+
+    // Populated slice — pick recommendation by deterministic hash
+    const hash = hashSlice(f);
+    const rec = pickRecommendation(hash);
+
+    RECOMMENDATION_AVAILABLE = true;
+    COPILOT_RECOMMENDATION = rec;
+    HAS_FAILING_GUARDRAIL = (rec === 'Iterate' || rec === 'Stop');
+
+    if (recValueEl) recValueEl.textContent = rec;
+
+    const recapEl = document.getElementById('recapCallout');
+    if (recapEl) recapEl.innerHTML = NARRATIVES[rec].callout;
+    renderList(document.getElementById('prosList'), NARRATIVES[rec].pros);
+    renderList(document.getElementById('consList'), NARRATIVES[rec].cons);
+    renderList(document.getElementById('risksList'), NARRATIVES[rec].risks);
+
+    shiftMetricDeltas(hash);
+
+    // Reset owner decision to the new Copilot recommendation when the slice changes
+    currentDecision = rec;
+    selectDecision(rec);
+  }
 
   function saveDecision() {
     const toast = document.getElementById('toast');
@@ -1810,6 +2092,7 @@
   }
 
   updateSaveButton();
+  applySlice();
 </script>
 
 </body>
