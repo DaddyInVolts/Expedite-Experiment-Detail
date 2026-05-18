@@ -503,6 +503,14 @@
     flex-wrap: wrap;
   }
   .decision-card .card-header h2 .bulb { font-size: 18px; color: var(--warn-amber); }
+  .decision-card .decision-title { display: flex; flex-direction: column; gap: 2px; }
+  .decision-card .decision-title h2 { margin: 0; }
+  .decision-card .decision-subtext {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.3;
+  }
   .decision-pill-row {
     padding: 16px 24px 4px;
     display: flex; align-items: center; gap: 12px;
@@ -1140,7 +1148,10 @@
     <!-- R-03 / R-04 / R-06 Decision card -->
     <div class="card decision-card">
       <div class="card-header">
-        <h2><span class="bulb">💡</span> Decision</h2>
+        <div class="decision-title">
+          <h2><span class="bulb">💡</span> Decision</h2>
+          <div class="decision-subtext">Based on aggregated product experience</div>
+        </div>
       </div>
 
       <div class="decision-pill-row">
@@ -2017,6 +2028,14 @@
     if (el) el.textContent = value;
   }
 
+  // The Decision card and Copilot recommendation are scoped to the App=All
+  // aggregated rollup. Changing the App filter must NOT change the decision,
+  // recommendation, narrative, or gate state — only the Guardrail metric
+  // values per row. We track the last decision-relevant filter key so we can
+  // skip rewriting the decision card on app-only changes (this preserves the
+  // owner's current decision pick if they had overridden the recommendation).
+  let lastDecisionKey = null;
+
   function applySlice() {
     const f = getCurrentFilters();
     const empty = isEmptySlice(f);
@@ -2031,46 +2050,61 @@
 
     const recValueEl = document.getElementById('giRecValue');
 
+    // Decision-relevant filter snapshot (App forced to All — decision is on the rollup)
+    const decisionFilters = { ...f, app: 'All' };
+    const decisionKey = empty
+      ? 'empty:' + f.ring + ':' + f.iteration
+      : 'pop:' + hashSlice(decisionFilters);
+    const decisionChanged = (decisionKey !== lastDecisionKey);
+    lastDecisionKey = decisionKey;
+
     if (empty) {
-      RECOMMENDATION_AVAILABLE = false;
-      COPILOT_RECOMMENDATION = null;
-      HAS_FAILING_GUARDRAIL = false;
-      if (recValueEl) recValueEl.textContent = 'Unavailable';
-      if (saveBtn) saveBtn.disabled = true;
-      if (saveStatus) {
-        saveStatus.textContent = 'No scorecard for this slice — Save disabled.';
-        saveStatus.style.color = 'var(--text-secondary)';
+      if (decisionChanged) {
+        RECOMMENDATION_AVAILABLE = false;
+        COPILOT_RECOMMENDATION = null;
+        HAS_FAILING_GUARDRAIL = false;
+        if (recValueEl) recValueEl.textContent = 'Unavailable';
+        if (saveBtn) saveBtn.disabled = true;
+        if (saveStatus) {
+          saveStatus.textContent = 'No scorecard for this slice — Save disabled.';
+          saveStatus.style.color = 'var(--text-secondary)';
+        }
+        // Close any open metric-explain panel since rows are hidden
+        document.querySelectorAll('.metric-explain-panel.open').forEach(p => p.classList.remove('open'));
+        document.querySelectorAll('.metric-explain-btn[aria-expanded="true"]').forEach(b => {
+          b.setAttribute('aria-expanded', 'false');
+          b.textContent = '?';
+        });
       }
-      // Close any open metric-explain panel since rows are hidden
-      document.querySelectorAll('.metric-explain-panel.open').forEach(p => p.classList.remove('open'));
-      document.querySelectorAll('.metric-explain-btn[aria-expanded="true"]').forEach(b => {
-        b.setAttribute('aria-expanded', 'false');
-        b.textContent = '?';
-      });
       return;
     }
 
-    // Populated slice — pick recommendation by deterministic hash
-    const hash = hashSlice(f);
-    const rec = pickRecommendation(hash);
+    // Populated slice — decision content uses the App=All rollup hash
+    if (decisionChanged) {
+      const decisionHash = hashSlice(decisionFilters);
+      const rec = pickRecommendation(decisionHash);
 
-    RECOMMENDATION_AVAILABLE = true;
-    COPILOT_RECOMMENDATION = rec;
-    HAS_FAILING_GUARDRAIL = (rec === 'Iterate' || rec === 'Stop');
+      RECOMMENDATION_AVAILABLE = true;
+      COPILOT_RECOMMENDATION = rec;
+      HAS_FAILING_GUARDRAIL = (rec === 'Iterate' || rec === 'Stop');
 
-    if (recValueEl) recValueEl.textContent = rec;
+      if (recValueEl) recValueEl.textContent = rec;
 
-    const recapEl = document.getElementById('recapCallout');
-    if (recapEl) recapEl.innerHTML = NARRATIVES[rec].callout;
-    renderList(document.getElementById('prosList'), NARRATIVES[rec].pros);
-    renderList(document.getElementById('consList'), NARRATIVES[rec].cons);
-    renderList(document.getElementById('risksList'), NARRATIVES[rec].risks);
+      const recapEl = document.getElementById('recapCallout');
+      if (recapEl) recapEl.innerHTML = NARRATIVES[rec].callout;
+      renderList(document.getElementById('prosList'), NARRATIVES[rec].pros);
+      renderList(document.getElementById('consList'), NARRATIVES[rec].cons);
+      renderList(document.getElementById('risksList'), NARRATIVES[rec].risks);
 
-    shiftMetricDeltas(hash);
+      // Reset owner decision to the new Copilot recommendation when the
+      // decision-relevant slice changes (app-only changes leave it alone)
+      currentDecision = rec;
+      selectDecision(rec);
+    }
 
-    // Reset owner decision to the new Copilot recommendation when the slice changes
-    currentDecision = rec;
-    selectDecision(rec);
+    // Guardrail metric deltas always use the full filter (including App) so
+    // the per-row numbers change when the user re-slices by App
+    shiftMetricDeltas(hashSlice(f));
   }
 
   function saveDecision() {
