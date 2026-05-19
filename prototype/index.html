@@ -1990,8 +1990,9 @@
     if (row.dataset.baseDelta !== undefined) return parseFloat(row.dataset.baseDelta);
     const raw = (row.dataset.delta || '0').replace('−', '-').replace('%', '').trim();
     const v = parseFloat(raw);
-    row.dataset.baseDelta = isNaN(v) ? 0 : v;
-    return row.dataset.baseDelta;
+    const safe = isNaN(v) ? 0 : v;
+    row.dataset.baseDelta = safe;
+    return safe;
   }
 
   function formatDelta(v) {
