@@ -131,6 +131,41 @@
   }
   @media (max-width: 600px) { .main-content { padding: 16px; } }
 
+  /* ─────── Two-column content grid (R-26) ─────── */
+  /* Left column = data surfaces (IDEAS Recommendation, Guardrails, Experiment
+     Details, Supporting Evidence). Right column = decision actions (Record
+     decision card + Decision History). Right column is sticky so the owner
+     can read on the left and enter on the right without scrolling. */
+  .content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .content-grid { grid-template-columns: 1fr; }
+  }
+  .content-main { min-width: 0; }
+  .content-side {
+    position: sticky;
+    top: 72px;
+    align-self: start;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  /* On narrow viewports the right column drops below the data and is no
+     longer sticky — restore normal flow */
+  @media (max-width: 1100px) {
+    .content-side {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+  }
+
   .prototype-banner {
     background: var(--warn-bg);
     border: 1px solid #f0d878;
@@ -299,7 +334,7 @@
   body.empty-slice .decision-card .exception-form,
   body.empty-slice .decision-card #rationaleSection,
   body.empty-slice .decision-card .save-row,
-  body.empty-slice .decision-card .supporting-evidence,
+  body.empty-slice .evidence-card,
   body.empty-slice .legend-row,
   body.empty-slice .metric-cards-grid,
   body.empty-slice .history-list {
@@ -564,59 +599,66 @@
   .meta-kv .k { color: var(--text-secondary); }
   .meta-kv .v { color: var(--text); font-weight: 600; }
 
-  /* ─────── Decision card ─────── */
+  /* ─────── Decision card (right-rail "Record decision") ─────── */
   .decision-card { padding-bottom: 18px; }
   .decision-card .card-header {
     border-bottom: 1px solid var(--border);
-    padding: 18px 24px 14px;
-    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px 14px;
+    display: flex; align-items: flex-start; gap: 14px;
     flex-wrap: wrap;
   }
-  .decision-card .card-header h2 .bulb { font-size: 18px; color: var(--warn-amber); }
-  .decision-card .decision-title { display: flex; flex-direction: column; gap: 2px; }
-  .decision-card .decision-title h2 { margin: 0; }
+  .decision-card .card-header h2 .bulb { font-size: 18px; color: var(--ms-blue); }
+  .decision-card .decision-title { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .decision-card .decision-title h2 { margin: 0; font-size: 16px; }
   .decision-card .decision-subtext {
     font-size: 12px;
     color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .decision-card .decision-scope {
+    font-size: 11px;
+    color: var(--text-tertiary);
     font-style: italic;
     line-height: 1.3;
   }
   .decision-pill-row {
-    padding: 16px 24px 4px;
-    display: flex; align-items: center; gap: 12px;
-    flex-wrap: wrap;
+    padding: 14px 20px 4px;
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
   }
   .decision-pill-row .pill-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase; letter-spacing: 0.05em;
     color: var(--text-secondary);
     font-weight: 700;
-    margin-right: 4px;
   }
   .decision-pills {
-    display: flex; gap: 8px; flex-wrap: wrap;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  @media (max-width: 1100px) {
+    .decision-pills { grid-template-columns: repeat(4, auto); justify-content: start; }
   }
   .decision-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 18px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 10px;
     border: 1px solid var(--border-strong);
     background: var(--surface);
-    border-radius: 18px;
-    font-size: 14px;
+    border-radius: 4px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     user-select: none;
     color: var(--text);
     transition: all 0.12s;
+    text-align: center;
   }
   .decision-pill:hover:not(.disabled) {
     border-color: var(--ms-blue);
     background: var(--ms-blue-light);
   }
   .decision-pill.selected {
-    background: var(--pass-green);
+    background: var(--ms-blue);
     color: #fff;
-    border-color: var(--pass-green);
+    border-color: var(--ms-blue);
   }
   .decision-pill.selected .check { display: inline-flex; }
   .decision-pill .check {
@@ -632,7 +674,7 @@
   }
 
   .gate-callout {
-    margin: 16px 24px 0;
+    margin: 16px 20px 0;
     background: var(--fail-bg);
     border-left: 3px solid var(--fail-red);
     padding: 12px 14px;
@@ -647,7 +689,7 @@
   .gate-callout strong { color: var(--fail-red); }
 
   .rec-callout {
-    margin: 16px 24px 0;
+    margin: 16px 20px 0;
     background: var(--pass-bg);
     border-left: 3px solid var(--pass-green);
     padding: 12px 14px;
@@ -666,8 +708,20 @@
   }
   .rec-callout strong { color: var(--pass-green); }
 
+  /* Divergent callout — shown when the owner's selected decision differs
+     from the Copilot recommendation. Switches the visual treatment from
+     "all aligned" green to an "attention required" amber. */
+  .rec-callout.divergent {
+    background: var(--warn-bg);
+    border-left-color: var(--warn-amber);
+  }
+  .rec-callout.divergent .ico {
+    background: var(--warn-amber);
+  }
+  .rec-callout.divergent strong { color: var(--warn-amber); }
+
   .collapsible-section {
-    padding: 14px 24px;
+    padding: 14px 20px;
   }
   .collapsible-header {
     display: flex; align-items: center; gap: 8px;
@@ -707,13 +761,31 @@
     box-shadow: 0 0 0 1px var(--ms-blue);
   }
   .save-row {
-    display: flex; align-items: center; justify-content: flex-end;
-    gap: 12px; margin-top: 12px;
+    display: flex; align-items: center;
+    gap: 10px; margin-top: 14px;
+    flex-wrap: wrap;
   }
+  .save-row .actor {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    margin-right: auto;
+  }
+  .save-row .actor .actor-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--ms-blue);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .save-row .actor .actor-name { font-weight: 600; }
   .save-status {
+    flex-basis: 100%;
     font-size: 12px;
     color: var(--text-secondary);
-    margin-right: auto;
+    text-align: right;
+    margin-top: 2px;
   }
   .btn {
     background: var(--ms-blue);
@@ -791,11 +863,13 @@
     font-weight: 600;
   }
 
-  /* Supporting evidence */
+  /* Supporting evidence — rendered inside its own standalone .evidence-card
+     at the bottom of the left content column (R-26). */
+  .evidence-card .card-header h2 {
+    font-size: 16px;
+  }
   .supporting-evidence {
-    padding: 16px 24px 0;
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
+    padding: 4px 24px 18px;
   }
   .supporting-evidence h3 {
     font-size: 13px; font-weight: 700;
@@ -1169,6 +1243,10 @@
       </div>
     </div>
 
+    <!-- R-26 — Two-column content grid: data surfaces on the left, decision actions on the right (sticky) -->
+    <div class="content-grid">
+      <div class="content-main">
+
     <!-- R-02 / R-16 IDEAS Recommendation (collapsible, advisory) -->
     <div class="gi-card" id="giCard">
       <div class="ir-header">
@@ -1213,102 +1291,6 @@
           <strong><span class="empty-ico">⊘</span>No scorecard executed for this slice.</strong>
           <p>No IDEAS Recommendation to display. Pick a Ring outside <code>SDF</code>/<code>MSIT</code> and an Iteration not in <code>{1, 3, 5, 7}</code> to view results.</p>
         </div>
-      </div>
-    </div>
-
-    <!-- R-03 / R-04 / R-06 Decision card -->
-    <div class="card decision-card">
-      <div class="card-header">
-        <div class="decision-title">
-          <h2><span class="bulb">💡</span> Decision</h2>
-          <div class="decision-subtext">Based on aggregated product experience</div>
-        </div>
-      </div>
-
-      <div class="decision-pill-row">
-        <span class="pill-label">Owner decision</span>
-        <div class="decision-pills" id="decisionOptions">
-          <div class="decision-pill" data-decision="Ship" id="opt-ship">
-            <span class="check">✓</span> Ship
-          </div>
-          <div class="decision-pill selected" data-decision="Iterate" id="opt-iterate">
-            <span class="check">✓</span> Iterate
-          </div>
-          <div class="decision-pill" data-decision="Stop">
-            <span class="check">✓</span> Stop
-          </div>
-          <div class="decision-pill" data-decision="Hold">
-            <span class="check">✓</span> Hold
-          </div>
-        </div>
-      </div>
-
-      <div class="rec-callout" id="recCallout">
-        <span class="ico">✓</span>
-        <div id="recCalloutText">
-          <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Ship is available as an override for legal / brand / business reasons — see warning below.
-        </div>
-      </div>
-
-      <div class="gate-callout" id="gateMsg">
-        <span id="gateMsgText"><strong>⛔ Ship is not recommended.</strong> One or more guardrail metrics are failing for this slice. You may still ship for legal, brand, or business reasons — document the override below for the audit trail.</span>
-      </div>
-
-      <div class="collapsible-section open" id="rationaleSection">
-        <div class="collapsible-header" onclick="toggleSection('rationaleSection')">
-          <span class="gi-chevron">›</span>
-          <span class="title">Decision Rationale <span class="req" id="rationaleReqMarker">*</span></span>
-          <span style="margin-left: auto; font-size: 11px; color: var(--text-tertiary);" id="rationaleReqLabel">required</span>
-        </div>
-        <div class="collapsible-body">
-          <div class="help-text" id="rationaleHelp" style="margin-bottom: 8px;">Required only when your decision differs from Copilot's recommendation (R-04).</div>
-          <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
-
-          <div class="exception-form" id="exceptionForm">
-            <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
-            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · BH-significant at q = 0.012 (FDR ≤ 0.05, family m = 19, R-21). Document the override below — all three fields are required for audit.</div>
-            <div class="field">
-              <label>Why is this acceptable? <span class="req">*</span></label>
-              <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
-            </div>
-            <div class="field">
-              <label>Mitigation <span class="req">*</span></label>
-              <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
-            </div>
-            <div class="field">
-              <label>Followups <span class="req">*</span></label>
-              <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
-            </div>
-            <div class="exception-status" id="excStatus">3 of 3 override fields required · 0 complete</div>
-          </div>
-
-          <div class="save-row">
-            <span class="save-status" id="saveStatus">Decision Rationale required to save.</span>
-            <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
-            <button class="btn" type="button" id="saveBtn" disabled onclick="saveDecision()">Save Decision</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="supporting-evidence">
-        <h3>Supporting Evidence</h3>
-        <h4 style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);margin-bottom:6px;">Scorecards</h4>
-        <ul class="evidence-list" id="scorecard-list">
-          <li>🔗 <a href="#">Engagement Scorecard ↗</a> <span class="access-note">(Expedite · 8 metrics · refreshed 6h ago)</span></li>
-          <li>🔗 <a href="#">Retention Scorecard ↗</a> <span class="access-note">(Expedite · 6 metrics · refreshed 6h ago)</span></li>
-          <li>🔗 <a href="#">Upsell &amp; Conversion Scorecard ↗</a> <span class="access-note">(Expedite · 4 metrics · refreshed 12h ago)</span></li>
-        </ul>
-        <h4 style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);margin-top:14px;margin-bottom:6px;">Other References</h4>
-        <ul class="evidence-list">
-          <li>🔗 <a href="#">Experiment Portal ↗</a> <span class="access-note">(access may be restricted)</span></li>
-          <li>📎 <span class="na">PM design doc — <a href="#" style="color:var(--primary);font-weight:500;">+ Add link</a></span></li>
-          <li>🔗 <a href="#">Growth Orchestrator ↗</a> <span class="access-note">(Engagement &amp; Retention)</span></li>
-          <li>📋 <span class="na">Pre-launch eval set — Not linked</span></li>
-        </ul>
-      </div>
-      <div class="empty-slice-state">
-        <strong><span class="empty-ico">⊘</span>No scorecard for this slice — no ship decision can be made.</strong>
-        <p>The Ring/Iteration combination you selected was not flighted, so no scorecard, guardrail metrics, or Copilot recommendation exists. Decision controls are disabled until you pick a slice with executed data.</p>
       </div>
     </div>
 
@@ -1677,56 +1659,172 @@
       </div>
     </div>
 
-    <!-- R-11 / R-20 Decision History -->
-    <div class="card">
+    <!-- R-09 / R-26 Supporting Evidence — standalone card at the bottom of the left column -->
+    <div class="card evidence-card">
       <div class="card-header">
-        <h2>🕒 Decision History</h2>
-        <span class="req-tag">R-11 · R-20 · preview</span>
+        <h2>🔗 Supporting Evidence</h2>
+        <span class="req-tag">R-09</span>
       </div>
-      <div class="card-body">
-        <ul class="history-list">
-          <li class="history-item">
-            <div class="when">14 days ago</div>
-            <div><span class="who">Priya Subramanian</span> <span class="what">— started experiment at 50/50 allocation.</span></div>
-          </li>
-          <li class="history-item">
-            <div class="when">3 days ago</div>
-            <div><span class="who">Marcus Hill (DS)</span> <span class="what">— flagged 7-day retention regression in Consumer cohort.</span></div>
-          </li>
-          <li class="history-item">
-            <div class="when">today</div>
-            <div><span class="who">Copilot</span> <span class="what">— generated recommendation: Iterate.</span></div>
-          </li>
-          <!-- R-20 example: prior progression override audit-log entry -->
-          <li class="history-item override">
-            <div class="when">
-              30 days ago
-              <div class="audit-utc">2026-04-13T16:42:08Z</div>
-            </div>
-            <div>
-              <div>
-                <span class="override-badge">Override</span>
-                <span class="who">David Lydston</span>
-                <span class="what">— shipped V1 progression against Copilot verdict.</span>
-              </div>
-              <div class="audit-fields">
-                <span class="k">Actor:</span><span>David Lydston &lt;dalyds@microsoft.com&gt;</span>
-                <span class="k">Timestamp (UTC):</span><span>2026-04-13T16:42:08Z</span>
-                <span class="k">Original verdict:</span><span>Iterate (Copilot recommendation at override time)</span>
-                <span class="k">Override decision:</span><span>Ship</span>
-                <span class="k">Why acceptable:</span><span>Build keynote demo dependency — narrow 5% audience, two-week sunset, no upmarket exposure.</span>
-                <span class="k">Mitigation:</span><span>Daily metric review by DS partner; auto-rollback rule on any &gt;1% retention regression.</span>
-                <span class="k">Followups:</span><span>Bug 8423218 — rollback playbook; Workitem 8423219 — re-run with corrected sample size.</span>
-              </div>
-            </div>
-          </li>
+      <div class="supporting-evidence">
+        <h4 style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);margin-bottom:6px;">Scorecards</h4>
+        <ul class="evidence-list" id="scorecard-list">
+          <li>🔗 <a href="#">Engagement Scorecard ↗</a> <span class="access-note">(Expedite · 8 metrics · refreshed 6h ago)</span></li>
+          <li>🔗 <a href="#">Retention Scorecard ↗</a> <span class="access-note">(Expedite · 6 metrics · refreshed 6h ago)</span></li>
+          <li>🔗 <a href="#">Upsell &amp; Conversion Scorecard ↗</a> <span class="access-note">(Expedite · 4 metrics · refreshed 12h ago)</span></li>
         </ul>
-        <div class="empty-slice-state">
-          <strong><span class="empty-ico">⊘</span>No decision history for this slice.</strong>
-          <p>Decisions are recorded per scorecard. Since no scorecard exists for this Ring × Iteration, there are no historical decisions or overrides to show.</p>
-        </div>
+        <h4 style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);margin-top:14px;margin-bottom:6px;">Other References</h4>
+        <ul class="evidence-list">
+          <li>🔗 <a href="#">Experiment Portal ↗</a> <span class="access-note">(access may be restricted)</span></li>
+          <li>📎 <span class="na">PM design doc — <a href="#" style="color:var(--primary);font-weight:500;">+ Add link</a></span></li>
+          <li>🔗 <a href="#">Growth Orchestrator ↗</a> <span class="access-note">(Engagement &amp; Retention)</span></li>
+          <li>📋 <span class="na">Pre-launch eval set — Not linked</span></li>
+        </ul>
       </div>
     </div>
+
+      </div>  <!-- /.content-main -->
+
+      <!-- R-26 — Right rail: Record decision (sticky) + Decision History -->
+      <aside class="content-side" aria-label="Decision actions">
+
+        <!-- R-03 / R-04 / R-06 Decision card (moved to right rail) -->
+        <div class="card decision-card">
+          <div class="card-header">
+            <div class="decision-title">
+              <h2><span class="bulb">🔖</span> Record decision</h2>
+              <div class="decision-subtext">Captured to the audit trail with your name and timestamp.</div>
+              <div class="decision-scope">Based on aggregated product experience</div>
+            </div>
+          </div>
+
+          <div class="decision-pill-row">
+            <span class="pill-label">Decision</span>
+            <div class="decision-pills" id="decisionOptions">
+              <div class="decision-pill" data-decision="Ship" id="opt-ship">
+                <span class="check">✓</span> Ship
+              </div>
+              <div class="decision-pill selected" data-decision="Iterate" id="opt-iterate">
+                <span class="check">✓</span> Iterate
+              </div>
+              <div class="decision-pill" data-decision="Stop">
+                <span class="check">✓</span> Stop
+              </div>
+              <div class="decision-pill" data-decision="Hold">
+                <span class="check">✓</span> Hold
+              </div>
+            </div>
+          </div>
+
+          <div class="rec-callout" id="recCallout">
+            <span class="ico">✓</span>
+            <div id="recCalloutText">
+              <strong>Iterate is the current owner-proposed decision.</strong> The Copilot recommendation also suggests Iterate. Ship is available as an override for legal / brand / business reasons — see warning below.
+            </div>
+          </div>
+
+          <div class="gate-callout" id="gateMsg">
+            <span id="gateMsgText"><strong>⛔ Ship is not recommended.</strong> One or more guardrail metrics are failing for this slice. You may still ship for legal, brand, or business reasons — document the override below for the audit trail.</span>
+          </div>
+
+          <div class="collapsible-section open" id="rationaleSection">
+            <div class="collapsible-header" onclick="toggleSection('rationaleSection')">
+              <span class="gi-chevron">›</span>
+              <span class="title">Decision Rationale <span class="req" id="rationaleReqMarker">*</span></span>
+              <span style="margin-left: auto; font-size: 11px; color: var(--text-tertiary);" id="rationaleReqLabel">required</span>
+            </div>
+            <div class="collapsible-body">
+              <div class="help-text" id="rationaleHelp" style="margin-bottom: 8px;">Required only when your decision differs from Copilot's recommendation (R-04).</div>
+              <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
+
+              <div class="exception-form" id="exceptionForm">
+                <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
+                <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · BH-significant at q = 0.012 (FDR ≤ 0.05, family m = 19, R-21). Document the override below — all three fields are required for audit.</div>
+                <div class="field">
+                  <label>Why is this acceptable? <span class="req">*</span></label>
+                  <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
+                </div>
+                <div class="field">
+                  <label>Mitigation <span class="req">*</span></label>
+                  <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
+                </div>
+                <div class="field">
+                  <label>Followups <span class="req">*</span></label>
+                  <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
+                </div>
+                <div class="exception-status" id="excStatus">3 of 3 override fields required · 0 complete</div>
+              </div>
+
+              <div class="save-row">
+                <span class="actor">
+                  <span class="actor-avatar">DL</span>
+                  <span class="actor-name">David Lydston</span>
+                </span>
+                <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
+                <button class="btn" type="button" id="saveBtn" disabled onclick="saveDecision()">Record decision</button>
+                <span class="save-status" id="saveStatus">Decision Rationale required to record.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-slice-state" style="margin: 16px 20px 0;">
+            <strong><span class="empty-ico">⊘</span>No scorecard for this slice — no ship decision can be made.</strong>
+            <p>The Ring/Iteration combination you selected was not flighted, so no scorecard, guardrail metrics, or Copilot recommendation exists. Decision controls are disabled until you pick a slice with executed data.</p>
+          </div>
+        </div>
+
+        <!-- R-11 / R-20 Decision History (moved to right rail under Decision card) -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🕒 Decision History</h2>
+            <span class="req-tag">R-11 · R-20 · preview</span>
+          </div>
+          <div class="card-body">
+            <ul class="history-list">
+              <li class="history-item">
+                <div class="when">14 days ago</div>
+                <div><span class="who">Priya Subramanian</span> <span class="what">— started experiment at 50/50 allocation.</span></div>
+              </li>
+              <li class="history-item">
+                <div class="when">3 days ago</div>
+                <div><span class="who">Marcus Hill (DS)</span> <span class="what">— flagged 7-day retention regression in Consumer cohort.</span></div>
+              </li>
+              <li class="history-item">
+                <div class="when">today</div>
+                <div><span class="who">Copilot</span> <span class="what">— generated recommendation: Iterate.</span></div>
+              </li>
+              <!-- R-20 example: prior progression override audit-log entry -->
+              <li class="history-item override">
+                <div class="when">
+                  30 days ago
+                  <div class="audit-utc">2026-04-13T16:42:08Z</div>
+                </div>
+                <div>
+                  <div>
+                    <span class="override-badge">Override</span>
+                    <span class="who">David Lydston</span>
+                    <span class="what">— shipped V1 progression against Copilot verdict.</span>
+                  </div>
+                  <div class="audit-fields">
+                    <span class="k">Actor:</span><span>David Lydston &lt;dalyds@microsoft.com&gt;</span>
+                    <span class="k">Timestamp (UTC):</span><span>2026-04-13T16:42:08Z</span>
+                    <span class="k">Original verdict:</span><span>Iterate (Copilot recommendation at override time)</span>
+                    <span class="k">Override decision:</span><span>Ship</span>
+                    <span class="k">Why acceptable:</span><span>Build keynote demo dependency — narrow 5% audience, two-week sunset, no upmarket exposure.</span>
+                    <span class="k">Mitigation:</span><span>Daily metric review by DS partner; auto-rollback rule on any &gt;1% retention regression.</span>
+                    <span class="k">Followups:</span><span>Bug 8423218 — rollback playbook; Workitem 8423219 — re-run with corrected sample size.</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="empty-slice-state">
+              <strong><span class="empty-ico">⊘</span>No decision history for this slice.</strong>
+              <p>Decisions are recorded per scorecard. Since no scorecard exists for this Ring × Iteration, there are no historical decisions or overrides to show.</p>
+            </div>
+          </div>
+        </div>
+
+      </aside>  <!-- /.content-side -->
+    </div>  <!-- /.content-grid -->
 
   </main>
 </div>
@@ -1769,7 +1867,12 @@
       if (matches) {
         recCalloutText.innerHTML = `<strong>${decision} is the current owner-proposed decision.</strong> The Copilot recommendation also suggests ${decision}. Ship is available as an override for legal / brand / business reasons — see warning below.`;
       } else {
-        recCalloutText.innerHTML = `<strong>${decision} is the current owner-proposed decision.</strong> Copilot recommends <em>${COPILOT_RECOMMENDATION}</em> for this slice — your decision differs and a rationale is required.`;
+        recCalloutText.innerHTML = `<strong>Diverges from Copilot (${COPILOT_RECOMMENDATION}) — rationale required.</strong> Your decision (${decision}) differs from the Copilot recommendation.`;
+      }
+      if (recCallout) {
+        recCallout.classList.toggle('divergent', !matches);
+        const recIco = recCallout.querySelector('.ico');
+        if (recIco) recIco.textContent = matches ? '✓' : '⚠';
       }
     }
     if (showOverrideWarning) {
@@ -1810,13 +1913,13 @@
     const ok = !required || hasRationale;
     saveBtn.disabled = !ok;
     if (!ok) {
-      saveStatus.textContent = `Rationale required (min 10 chars) — your decision (${currentDecision}) differs from Copilot's recommendation (${COPILOT_RECOMMENDATION}).`;
+      saveStatus.textContent = `Rationale required (min 10 chars) — diverges from Copilot's ${COPILOT_RECOMMENDATION}.`;
       saveStatus.style.color = 'var(--text-secondary)';
     } else if (!required && !hasRationale) {
-      saveStatus.textContent = `Ready to save — rationale optional (decision matches Copilot's recommendation).`;
+      saveStatus.textContent = `Ready to record — rationale optional (decision matches Copilot's recommendation).`;
       saveStatus.style.color = 'var(--pass-green)';
     } else {
-      saveStatus.textContent = 'Ready to save.';
+      saveStatus.textContent = 'Ready to record.';
       saveStatus.style.color = 'var(--pass-green)';
     }
   }
@@ -2176,7 +2279,7 @@
         if (recSubEl)   recSubEl.textContent = 'no scorecard for this slice';
         if (saveBtn) saveBtn.disabled = true;
         if (saveStatus) {
-          saveStatus.textContent = 'No scorecard for this slice — Save disabled.';
+          saveStatus.textContent = 'No scorecard for this slice — Record disabled.';
           saveStatus.style.color = 'var(--text-secondary)';
         }
         // Close any open metric-explain panel since rows are hidden
