@@ -135,10 +135,12 @@
   /* Left column = data surfaces (IDEAS Recommendation, Guardrails, Experiment
      Details, Supporting Evidence). Right column = decision actions (Record
      decision card + Decision History). Right column is sticky so the owner
-     can read on the left and enter on the right without scrolling. */
+     can read on the left and enter on the right without scrolling.
+     The right rail is sized at ~33% of the content area so it scales with
+     viewport width without ever overlapping the data cards on the left. */
   .content-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-columns: minmax(0, 1fr) calc(33vw - 16px);
     gap: 16px;
     align-items: start;
   }
@@ -155,6 +157,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
   }
   /* On narrow viewports the right column drops below the data and is no
      longer sticky — restore normal flow */
@@ -206,6 +209,46 @@
     font-weight: 500;
   }
   .variant-chip strong { font-weight: 600; margin-right: 4px; }
+
+  /* ─────── Experiment meta strip (R-23) ─────── */
+  /* A single thin line of high-signal experiment facts (owner, scorecard
+     length, allocation split, treatment count) that sits between the
+     description and the filter bar so reviewers see who is running the
+     experiment and how it was set up before they touch any filters. */
+  .experiment-meta-strip {
+    display: flex; flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin: 4px 0 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .experiment-meta-strip .meta-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .experiment-meta-strip .meta-icon {
+    width: 14px; display: inline-flex; justify-content: center;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .experiment-meta-strip .meta-owner-avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--ms-blue);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    margin-right: 2px;
+  }
+  .experiment-meta-strip .meta-value {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .experiment-meta-strip .meta-role {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
 
   /* ─────── Filter bar (R-24) ─────── */
   .filter-bar {
@@ -1177,6 +1220,25 @@
       <p class="description">
         Suggest follow-up action items at the end of every Copilot chat session (Drafting Agent for paid Copilot users, vanilla BizChat for non-Copilot users). Measures uptake on suggested actions and downstream effect on retention and upsell across Consumer + Commercial.
       </p>
+      <!-- R-23 — Thin meta strip: owner, scorecard length, allocation split, treatment count -->
+      <div class="experiment-meta-strip" aria-label="Experiment overview">
+        <span class="meta-item">
+          <span class="meta-owner-avatar" aria-hidden="true">PS</span>
+          <span class="meta-value">Priya Subramanian</span><span class="meta-role">, +1 · Owner</span>
+        </span>
+        <span class="meta-item">
+          <span class="meta-icon" aria-hidden="true">📅</span>
+          <span class="meta-value">14-day run</span> · started 4/27/2026
+        </span>
+        <span class="meta-item">
+          <span class="meta-icon" aria-hidden="true">➕</span>
+          <span class="meta-value">50 / 50 split</span>
+        </span>
+        <span class="meta-item">
+          <span class="meta-icon" aria-hidden="true">🧪</span>
+          <span class="meta-value">1 treatment</span> · 1.25M users exposed
+        </span>
+      </div>
       <div class="filter-bar" id="filterBar" aria-label="Experiment data filters (R-24)">
         <div class="filter-pill" data-filter="ring" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
           <span class="filter-label">Ring:</span>
@@ -1735,35 +1797,41 @@
             <div class="collapsible-body">
               <div class="help-text" id="rationaleHelp" style="margin-bottom: 8px;">Required only when your decision differs from Copilot's recommendation (R-04).</div>
               <textarea class="rationale-input" id="rationaleInput" placeholder="Why this decision? Capture meaningful change reasoning, not just stat-sig results. What user/business outcome does this represent? What would have changed your call?"></textarea>
-
-              <div class="exception-form" id="exceptionForm">
-                <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
-                <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · BH-significant at q = 0.012 (FDR ≤ 0.05, family m = 19, R-21). Document the override below — all three fields are required for audit.</div>
-                <div class="field">
-                  <label>Why is this acceptable? <span class="req">*</span></label>
-                  <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
-                </div>
-                <div class="field">
-                  <label>Mitigation <span class="req">*</span></label>
-                  <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
-                </div>
-                <div class="field">
-                  <label>Followups <span class="req">*</span></label>
-                  <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
-                </div>
-                <div class="exception-status" id="excStatus">3 of 3 override fields required · 0 complete</div>
-              </div>
-
-              <div class="save-row">
-                <span class="actor">
-                  <span class="actor-avatar">DL</span>
-                  <span class="actor-name">David Lydston</span>
-                </span>
-                <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
-                <button class="btn" type="button" id="saveBtn" disabled onclick="saveDecision()">Record decision</button>
-                <span class="save-status" id="saveStatus">Decision Rationale required to record.</span>
-              </div>
             </div>
+          </div>
+
+          <!-- Guardrail Override form — sibling of rationaleSection so it remains
+               available even when the rationale textbox is hidden in the matching
+               state (it only opens on Ship + failing guardrail anyway) -->
+          <div class="exception-form" id="exceptionForm" style="margin: 0 20px;">
+            <h3>⚠ Guardrail Override — required when shipping despite a failing guardrail</h3>
+            <div class="help-text">Failing guardrail: <strong>7-day retention (Consumer)</strong> · −0.42% · BH-significant at q = 0.012 (FDR ≤ 0.05, family m = 19, R-21). Document the override below — all three fields are required for audit.</div>
+            <div class="field">
+              <label>Why is this acceptable? <span class="req">*</span></label>
+              <textarea id="excAcceptable" placeholder="Legal, brand, or business reason this override is justified. What outcome outweighs the regression?"></textarea>
+            </div>
+            <div class="field">
+              <label>Mitigation <span class="req">*</span></label>
+              <textarea id="excMitigation" placeholder="What will we do to limit the impact? E.g., gradual rollout, feature flag, monitoring threshold."></textarea>
+            </div>
+            <div class="field">
+              <label>Followups <span class="req">*</span></label>
+              <textarea id="excFollowups" placeholder="What tracked work items will close this loop? Paste links to ADO / GitHub issues."></textarea>
+            </div>
+            <div class="exception-status" id="excStatus">3 of 3 override fields required · 0 complete</div>
+          </div>
+
+          <!-- Save row — sibling of rationaleSection so the Record decision /
+               Discard controls stay visible even when the rationale textbox is
+               hidden in the matching state -->
+          <div class="save-row" style="margin: 14px 20px 0;">
+            <span class="actor">
+              <span class="actor-avatar">DL</span>
+              <span class="actor-name">David Lydston</span>
+            </span>
+            <button class="btn btn-secondary" type="button" onclick="resetForm()">Discard</button>
+            <button class="btn" type="button" id="saveBtn" onclick="saveDecision()">Record decision</button>
+            <span class="save-status" id="saveStatus">Ready to record.</span>
           </div>
 
           <div class="empty-slice-state" style="margin: 16px 20px 0;">
@@ -1895,15 +1963,20 @@
 
   function updateRationaleRequirement() {
     const required = rationaleRequired();
+    const section = document.getElementById('rationaleSection');
+    // Hide the rationale textbox entirely when it would be optional — the
+    // user only needs to write a rationale when their decision diverges
+    // from the Copilot recommendation (R-04).
+    if (section) section.style.display = required ? '' : 'none';
     rationaleReqMarker.style.display = required ? '' : 'none';
-    rationaleReqLabel.textContent = required ? 'required' : 'optional';
+    rationaleReqLabel.textContent = required ? 'required' : '';
     rationaleReqLabel.style.color = required ? 'var(--fail-red)' : 'var(--text-tertiary)';
     if (!RECOMMENDATION_AVAILABLE) {
       rationaleHelp.textContent = 'Copilot recommendation is unavailable — rationale is required for any decision (R-04).';
     } else if (required) {
-      rationaleHelp.textContent = `Required because your decision (${currentDecision}) differs from Copilot's recommendation (${COPILOT_RECOMMENDATION}) (R-04).`;
+      rationaleHelp.textContent = `Required: your decision (${currentDecision}) differs from Copilot's (${COPILOT_RECOMMENDATION}).`;
     } else {
-      rationaleHelp.textContent = `Optional — your decision matches Copilot's recommendation (${COPILOT_RECOMMENDATION}). You may still add context (R-04).`;
+      rationaleHelp.textContent = '';
     }
   }
 
@@ -1915,9 +1988,6 @@
     if (!ok) {
       saveStatus.textContent = `Rationale required (min 10 chars) — diverges from Copilot's ${COPILOT_RECOMMENDATION}.`;
       saveStatus.style.color = 'var(--text-secondary)';
-    } else if (!required && !hasRationale) {
-      saveStatus.textContent = `Ready to record — rationale optional (decision matches Copilot's recommendation).`;
-      saveStatus.style.color = 'var(--pass-green)';
     } else {
       saveStatus.textContent = 'Ready to record.';
       saveStatus.style.color = 'var(--pass-green)';
