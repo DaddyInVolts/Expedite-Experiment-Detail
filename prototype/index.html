@@ -289,8 +289,9 @@
   body.empty-slice .empty-slice-state { display: block; }
 
   /* Hide populated content when slice is empty */
-  body.empty-slice .gi-body .copilot-rec-callout,
-  body.empty-slice .gi-body .pcr-grid,
+  body.empty-slice .gi-card .ir-summary,
+  body.empty-slice .gi-card .ir-toggle-row,
+  body.empty-slice .gi-body .ir-rationale-box,
   body.empty-slice .gi-body .scope-note,
   body.empty-slice .decision-card .decision-pill-row,
   body.empty-slice .decision-card .rec-callout,
@@ -305,12 +306,12 @@
     display: none !important;
   }
 
-  /* Recommendation pill shows "Unavailable" treatment when empty */
-  body.empty-slice .gi-rec-pill {
+  /* IDEAS Recommendation hero takes on an "Unavailable" tone when empty */
+  body.empty-slice .ir-rec-icon {
     background: var(--neutral-bg);
     color: var(--text-tertiary);
   }
-  body.empty-slice .gi-rec-pill .rec-value { color: var(--text-tertiary); }
+  body.empty-slice .ir-rec-title { color: var(--text-tertiary); }
 
   /* ─────── Card ─────── */
   .card {
@@ -337,7 +338,7 @@
     font-weight: 600;
   }
 
-  /* ─────── Generative Insights collapsible ─────── */
+  /* ─────── IDEAS Recommendation card (formerly Generative Insights) ─────── */
   .gi-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -345,53 +346,101 @@
     margin-bottom: 16px;
     overflow: hidden;
   }
-  .gi-header {
-    padding: 14px 20px;
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer; user-select: none;
+
+  .ir-header {
+    padding: 18px 24px 14px;
   }
-  .gi-header:hover { background: #fafafa; }
-  .gi-chevron {
-    display: inline-block;
-    transition: transform 0.18s ease;
-    color: var(--text-secondary);
-    font-size: 14px;
+  .ir-eyebrow {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ms-blue);
+    margin-bottom: 12px;
   }
-  .gi-card.open .gi-chevron { transform: rotate(90deg); }
-  .gi-sparkle {
-    width: 22px; height: 22px;
-    background: linear-gradient(135deg, var(--ms-blue) 0%, #5a4bda 100%);
-    color: #fff; border-radius: 5px;
+  .ir-eyebrow .ir-eyebrow-sparkle {
+    font-size: 13px;
+    line-height: 1;
+  }
+  .ir-hero {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 14px;
+  }
+  .ir-rec-icon {
+    width: 56px; height: 56px;
+    border-radius: 8px;
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 28px;
+    line-height: 1;
+    flex: 0 0 56px;
+    background: var(--warn-bg);
+    color: var(--warn-amber);
   }
-  .gi-title {
-    font-size: 15px; font-weight: 600;
+  .ir-rec-icon[data-rec="Ship"]    { background: var(--pass-bg); color: var(--pass-green); }
+  .ir-rec-icon[data-rec="Iterate"] { background: var(--warn-bg); color: var(--warn-amber); }
+  .ir-rec-icon[data-rec="Stop"]    { background: var(--fail-bg); color: var(--fail-red); }
+  .ir-rec-icon[data-rec="Hold"]    { background: var(--neutral-bg); color: var(--text-secondary); }
+  .ir-rec-text { display: flex; flex-direction: column; gap: 2px; }
+  .ir-rec-title {
+    font-size: 26px;
+    font-weight: 700;
     color: var(--text);
+    line-height: 1.15;
   }
-  .gi-disclaimer {
-    font-size: 11px; color: var(--text-tertiary);
-    font-style: italic;
-    margin-left: 6px;
+  .ir-rec-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
   }
+
+  .ir-summary {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .ir-blocker-link {
+    color: var(--fail-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+  }
+  .ir-blocker-link:hover { color: var(--fail-red); }
+
   .gi-scope-subtext {
     font-size: 12px;
     color: var(--text-secondary);
     font-style: italic;
     line-height: 1.3;
-    margin-top: 1px;
   }
-  .gi-rec-pill {
-    margin-left: auto;
-    background: var(--neutral-bg);
-    border: 1px solid var(--border-strong);
-    padding: 4px 10px;
-    border-radius: 14px;
-    font-size: 12px;
-    color: var(--text);
+  .gi-disclaimer-inline {
+    color: var(--text-tertiary);
+    font-style: italic;
   }
-  .gi-rec-pill .rec-label { color: var(--text-secondary); margin-right: 4px; }
-  .gi-rec-pill .rec-value { font-weight: 700; }
+
+  .ir-toggle-row {
+    display: flex; justify-content: flex-end; align-items: center;
+    margin-top: 10px;
+  }
+  .ir-toggle {
+    background: none; border: 0; padding: 4px 2px;
+    font: inherit;
+    color: var(--link-blue);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    text-decoration: none;
+  }
+  .ir-toggle:hover { text-decoration: underline; }
+  .ir-toggle-chevron {
+    display: inline-block;
+    transition: transform 0.18s ease;
+    font-size: 14px;
+  }
+  .gi-card.open .ir-toggle-chevron { transform: rotate(90deg); }
+  .ir-toggle-label-expanded { display: none; }
+  .gi-card.open .ir-toggle-label-collapsed { display: none; }
+  .gi-card.open .ir-toggle-label-expanded { display: inline; }
+
   .gi-body {
     border-top: 1px solid var(--border);
     padding: 18px 24px 20px;
@@ -399,51 +448,34 @@
   }
   .gi-card.open .gi-body { display: block; }
 
-  .copilot-rec-callout {
-    background: var(--ms-blue-light);
-    border-left: 3px solid var(--ms-blue);
-    padding: 12px 14px;
-    border-radius: 0 4px 4px 0;
-    margin-bottom: 16px;
-    font-size: 13px;
-    color: var(--text);
-  }
-  .copilot-rec-callout strong { color: var(--ms-blue-dark); }
-
-  .pcr-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  @media (max-width: 760px) { .pcr-grid { grid-template-columns: 1fr; } }
-  .pcr-block {
+  .ir-rationale-box {
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 12px 14px;
+    padding: 14px 18px;
     background: #fafafa;
   }
-  .pcr-block .pcr-label {
-    font-size: 10.5px;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    font-weight: 700;
-    margin-bottom: 8px;
+  .ir-rationale-list {
+    list-style: none;
+    padding: 0; margin: 0;
   }
-  .pcr-block.pros .pcr-label { color: var(--pass-green); }
-  .pcr-block.cons .pcr-label { color: var(--warn-amber); }
-  .pcr-block.risks .pcr-label { color: var(--fail-red); }
-  .pcr-block ul { list-style: none; padding: 0; }
-  .pcr-block li {
-    font-size: 12.5px; color: var(--text-secondary);
-    padding: 4px 0; padding-left: 14px;
-    position: relative; line-height: 1.5;
+  .ir-rationale-list li {
+    position: relative;
+    padding: 6px 0 6px 22px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
   }
-  .pcr-block li::before {
-    content: '•'; position: absolute; left: 2px; top: 4px;
+  .ir-rationale-list li::before {
+    content: '';
+    position: absolute;
+    left: 4px; top: 13px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
   }
-  .pcr-block.pros li::before { color: var(--pass-green); }
-  .pcr-block.cons li::before { color: var(--warn-amber); }
-  .pcr-block.risks li::before { color: var(--fail-red); }
+  .ir-rationale-list li.ir-item-safe::before    { background: var(--pass-green); }
+  .ir-rationale-list li.ir-item-uncertain::before { background: var(--warn-amber); }
+  .ir-rationale-list li.ir-item-risk::before    { background: var(--fail-red); }
 
   .scope-note {
     font-size: 11px;
@@ -610,6 +642,12 @@
     display: flex; align-items: center; gap: 8px;
     cursor: pointer; user-select: none;
     padding: 6px 0;
+  }
+  .gi-chevron {
+    display: inline-block;
+    transition: transform 0.18s ease;
+    color: var(--text-secondary);
+    font-size: 14px;
   }
   .collapsible-section .gi-chevron { color: var(--text-secondary); }
   .collapsible-section.open .gi-chevron { transform: rotate(90deg); }
@@ -1100,55 +1138,44 @@
       </div>
     </div>
 
-    <!-- R-02 Generative Insights (collapsible, advisory) -->
-    <div class="gi-card open" id="giCard">
-      <div class="gi-header" onclick="toggleGI()">
-        <span class="gi-chevron">›</span>
-        <span class="gi-sparkle">✨</span>
-        <div>
-          <div><span class="gi-title">Generative Insights</span></div>
-          <div class="gi-scope-subtext">Based on aggregated product experience</div>
-          <div class="gi-disclaimer">AI-generated content may be incorrect</div>
+    <!-- R-02 / R-16 IDEAS Recommendation (collapsible, advisory) -->
+    <div class="gi-card" id="giCard">
+      <div class="ir-header">
+        <div class="ir-eyebrow">
+          <span class="ir-eyebrow-sparkle">✦</span>
+          <span class="ir-eyebrow-text">IDEAS Recommendation</span>
         </div>
-        <span class="gi-rec-pill">
-          <span class="rec-label">Recommendation</span>
-          <span class="rec-value" id="giRecValue">Iterate</span>
-        </span>
+        <div class="ir-hero">
+          <div class="ir-rec-icon" id="giRecIcon" data-rec="Iterate" aria-hidden="true">↻</div>
+          <div class="ir-rec-text">
+            <div class="ir-rec-title" id="giRecTitle">Iterate</div>
+            <div class="ir-rec-sub" id="giRecSub">not yet ship-ready</div>
+          </div>
+        </div>
+        <div class="ir-summary" id="recapCallout">
+          Both engagement and upsell move positively — but <a href="#" class="ir-blocker-link">7-day retention (Consumer) regressed −0.42% and triggers the Ship gate.</a> Address the regression, or document an exception, before this can ship.
+        </div>
+        <div class="gi-scope-subtext">
+          Based on aggregated product experience · <span class="gi-disclaimer-inline">AI-generated content may be incorrect</span>
+        </div>
+        <div class="ir-toggle-row">
+          <a href="#" class="ir-toggle" id="giToggle" onclick="event.preventDefault(); toggleGI();" role="button" aria-expanded="false" aria-controls="giBody">
+            <span class="ir-toggle-label-collapsed">Expand calculation details</span>
+            <span class="ir-toggle-label-expanded">Hide calculation details</span>
+            <span class="ir-toggle-chevron" aria-hidden="true">›</span>
+          </a>
+        </div>
       </div>
-      <div class="gi-body">
-        <div class="copilot-rec-callout" id="recapCallout">
-          <strong>Copilot recommends: Iterate.</strong> The variant moves engagement and upsell positively but one stat-sig retention regression (Consumer 7-day) and weak Consumer engagement suggest more iteration before a full ship. Advisory only — the human owner makes the call.
-        </div>
-        <div class="pcr-grid">
-          <div class="pcr-block pros">
-            <div class="pcr-label">▲ Pros</div>
-            <ul id="prosList">
-              <li>Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.</li>
-              <li>Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.</li>
-              <li>No regression on the primary North Star metric (chat satisfaction) in either segment.</li>
-            </ul>
-          </div>
-          <div class="pcr-block cons">
-            <div class="pcr-label">► Cons</div>
-            <ul id="consList">
-              <li>Engagement (Consumer) flat — variant did not move the consumer needle as anticipated.</li>
-              <li>Daily session count slightly negative (−0.6%, not stat-sig) on Commercial.</li>
-              <li>Ship-readiness scorecard: 9 of 12 guardrails passing — below the 11/12 historical bar.</li>
-            </ul>
-          </div>
-          <div class="pcr-block risks">
-            <div class="pcr-label">▼ Risks</div>
-            <ul id="risksList">
-              <li>7-day retention (Consumer) regression −0.42% is stat-sig and triggers a Fail guardrail — Ship gate engaged.</li>
-              <li>Sample size on Consumer Pro segment is below recommended power (~62%).</li>
-              <li>Holiday seasonality may be inflating Commercial engagement gain.</li>
-            </ul>
-          </div>
+      <div class="gi-body" id="giBody">
+        <div class="ir-rationale-box" aria-label="Decision rationale">
+          <ul class="ir-rationale-list" id="rationaleList">
+            <!-- populated by JS: safe (green) · uncertain (amber) · risk (red) -->
+          </ul>
         </div>
         <div class="scope-note">R-07 — Computed from Expedite gold/silver-layer data only. No external retrieval.</div>
         <div class="empty-slice-state">
           <strong><span class="empty-ico">⊘</span>No scorecard executed for this slice.</strong>
-          <p>No Generative Insights to display. Pick a Ring outside <code>SDF</code>/<code>MSIT</code> and an Iteration not in <code>{1, 3, 5, 7}</code> to view results.</p>
+          <p>No IDEAS Recommendation to display. Pick a Ring outside <code>SDF</code>/<code>MSIT</code> and an Iteration not in <code>{1, 3, 5, 7}</code> to view results.</p>
         </div>
       </div>
     </div>
@@ -1833,7 +1860,10 @@
   });
 
   function toggleGI() {
-    document.getElementById('giCard').classList.toggle('open');
+    const card = document.getElementById('giCard');
+    const isOpen = card.classList.toggle('open');
+    const toggle = document.getElementById('giToggle');
+    if (toggle) toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   }
   function toggleSection(id) {
     document.getElementById(id).classList.toggle('open');
@@ -1905,7 +1935,9 @@
 
   const NARRATIVES = {
     Ship: {
-      callout: '<strong>Copilot recommends: Ship.</strong> All BH-significant guardrails are net-positive for this slice, retention is non-regressing in both segments, and engagement gains exceed the historical bar. Advisory only — the human owner makes the call.',
+      icon: '✓',
+      sub: 'ready to ship',
+      summary: 'All BH-significant guardrails are net-positive for this slice — engagement and retention both clear the ship bar. Variant is <a href="#" class="ir-blocker-link" style="color:var(--pass-green);">ready to roll out</a> with no open blockers.',
       pros: [
         'Engagement (Commercial) +3.4% — stat-sig improvement on suggested-action acceptance rate; CI well above zero.',
         'Upsell (Consumer) Copilot Pro upgrade conversion +2.1%, stat-sig.',
@@ -1921,7 +1953,9 @@
       ]
     },
     Iterate: {
-      callout: '<strong>Copilot recommends: Iterate.</strong> The variant moves engagement and upsell positively but one stat-sig retention regression (Consumer 7-day) and weak Consumer engagement suggest more iteration before a full ship. Advisory only — the human owner makes the call.',
+      icon: '↻',
+      sub: 'not yet ship-ready',
+      summary: 'Both engagement and upsell move positively — but <a href="#" class="ir-blocker-link">7-day retention (Consumer) regressed −0.42% and triggers the Ship gate.</a> Address the regression, or document an exception, before this can ship.',
       pros: [
         'Engagement (Commercial) +3.1% — stat-sig improvement on suggested-action acceptance rate.',
         'Upsell (Consumer) Copilot Pro upgrade flow conversion +1.8%, stat-sig.',
@@ -1939,7 +1973,9 @@
       ]
     },
     Stop: {
-      callout: '<strong>Copilot recommends: Stop.</strong> Multiple stat-sig regressions including primary retention and acceptance rate; the variant is net-harmful for this slice. Advisory only — the human owner makes the call.',
+      icon: '⊘',
+      sub: 'not safe to ship',
+      summary: 'Multiple stat-sig regressions — including <a href="#" class="ir-blocker-link">primary retention and acceptance rate</a> — make the variant net-harmful for this slice. Continuing risks compounding the loss.',
       pros: [
         'Two engagement sub-metrics show small directional improvements (not stat-sig).'
       ],
@@ -1955,7 +1991,9 @@
       ]
     },
     Hold: {
-      callout: '<strong>Copilot recommends: Hold.</strong> Scorecard is underpowered for this slice — most guardrails report MDE wider than observed deltas. Defer the decision until more data accumulates. Advisory only — the human owner makes the call.',
+      icon: '⏸',
+      sub: 'more data needed',
+      summary: 'Scorecard is underpowered — most guardrails report <a href="#" class="ir-blocker-link" style="color:var(--warn-amber);">MDE wider than observed deltas</a>. Defer the decision until more data accumulates.',
       pros: [
         'Directional signals are mixed-to-positive; nothing in the data argues for Stop.'
       ],
@@ -2038,6 +2076,22 @@
     ul.innerHTML = items.map(t => `<li>${t}</li>`).join('');
   }
 
+  // Renders the unified IDEAS Recommendation rationale list. Each row carries
+  // a colored dot indicating its classification — safe (green), uncertain
+  // (amber), or risk (red). Order: safe → uncertain → risk so reviewers see
+  // the strongest positives first and the blockers last.
+  function renderRationale(ul, narrative) {
+    if (!ul) return;
+    const items = [
+      ...narrative.pros.map(t => ({ kind: 'safe', text: t })),
+      ...narrative.cons.map(t => ({ kind: 'uncertain', text: t })),
+      ...narrative.risks.map(t => ({ kind: 'risk', text: t })),
+    ];
+    ul.innerHTML = items
+      .map(i => `<li class="ir-item-${i.kind}">${i.text}</li>`)
+      .join('');
+  }
+
   function setMetaIfExists(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
@@ -2063,7 +2117,9 @@
 
     document.body.classList.toggle('empty-slice', empty);
 
-    const recValueEl = document.getElementById('giRecValue');
+    const recIconEl  = document.getElementById('giRecIcon');
+    const recTitleEl = document.getElementById('giRecTitle');
+    const recSubEl   = document.getElementById('giRecSub');
 
     // Decision-relevant filter snapshot (App forced to All — decision is on the rollup)
     const decisionFilters = { ...f, app: 'All' };
@@ -2078,7 +2134,9 @@
         RECOMMENDATION_AVAILABLE = false;
         COPILOT_RECOMMENDATION = null;
         HAS_FAILING_GUARDRAIL = false;
-        if (recValueEl) recValueEl.textContent = 'Unavailable';
+        if (recIconEl)  { recIconEl.textContent = '–'; recIconEl.setAttribute('data-rec', ''); }
+        if (recTitleEl) recTitleEl.textContent = 'Unavailable';
+        if (recSubEl)   recSubEl.textContent = 'no scorecard for this slice';
         if (saveBtn) saveBtn.disabled = true;
         if (saveStatus) {
           saveStatus.textContent = 'No scorecard for this slice — Save disabled.';
@@ -2098,18 +2156,20 @@
     if (decisionChanged) {
       const decisionHash = hashSlice(decisionFilters);
       const rec = pickRecommendation(decisionHash);
+      const narrative = NARRATIVES[rec];
 
       RECOMMENDATION_AVAILABLE = true;
       COPILOT_RECOMMENDATION = rec;
       HAS_FAILING_GUARDRAIL = (rec === 'Iterate' || rec === 'Stop');
 
-      if (recValueEl) recValueEl.textContent = rec;
+      // IDEAS Recommendation hero
+      if (recIconEl)  { recIconEl.textContent = narrative.icon; recIconEl.setAttribute('data-rec', rec); }
+      if (recTitleEl) recTitleEl.textContent = rec;
+      if (recSubEl)   recSubEl.textContent = narrative.sub;
 
       const recapEl = document.getElementById('recapCallout');
-      if (recapEl) recapEl.innerHTML = NARRATIVES[rec].callout;
-      renderList(document.getElementById('prosList'), NARRATIVES[rec].pros);
-      renderList(document.getElementById('consList'), NARRATIVES[rec].cons);
-      renderList(document.getElementById('risksList'), NARRATIVES[rec].risks);
+      if (recapEl) recapEl.innerHTML = narrative.summary;
+      renderRationale(document.getElementById('rationaleList'), narrative);
 
       // Reset owner decision to the new Copilot recommendation when the
       // decision-relevant slice changes (app-only changes leave it alone)
