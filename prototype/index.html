@@ -473,9 +473,40 @@
     border-radius: 50%;
     background: var(--text-tertiary);
   }
-  .ir-rationale-list li.ir-item-safe::before    { background: var(--pass-green); }
-  .ir-rationale-list li.ir-item-uncertain::before { background: var(--warn-amber); }
-  .ir-rationale-list li.ir-item-risk::before    { background: var(--fail-red); }
+  .ir-rationale-list li.ir-item-safe::before { background: var(--pass-green); }
+  .ir-rationale-list li.ir-item-risk::before { background: var(--fail-red); }
+  .ir-rationale-list li.ir-item-flat::before {
+    background: #ffffff;
+    border: 1px solid var(--border-strong);
+    /* keep total visual size the same as the colored dots */
+    width: 7px; height: 7px;
+    left: 5px; top: 14px;
+  }
+
+  /* Legend row inside the expanded calculation-details panel */
+  .ir-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 18px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .ir-legend-item {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ir-legend-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .ir-legend-dot.ir-legend-safe { background: var(--pass-green); }
+  .ir-legend-dot.ir-legend-risk { background: var(--fail-red); }
+  .ir-legend-dot.ir-legend-flat {
+    background: #ffffff;
+    border: 1px solid var(--border-strong);
+    width: 7px; height: 7px;
+  }
 
   .scope-note {
     font-size: 11px;
@@ -1168,8 +1199,13 @@
       </div>
       <div class="gi-body" id="giBody">
         <div class="ir-rationale-box" aria-label="Decision rationale">
+          <div class="ir-legend" aria-label="Legend">
+            <span class="ir-legend-item"><span class="ir-legend-dot ir-legend-safe" aria-hidden="true"></span>Safe</span>
+            <span class="ir-legend-item"><span class="ir-legend-dot ir-legend-risk" aria-hidden="true"></span>Not safe</span>
+            <span class="ir-legend-item"><span class="ir-legend-dot ir-legend-flat" aria-hidden="true"></span>Flat</span>
+          </div>
           <ul class="ir-rationale-list" id="rationaleList">
-            <!-- populated by JS: safe (green) · uncertain (amber) · risk (red) -->
+            <!-- populated by JS: safe (green) · not safe (red) · flat (white) -->
           </ul>
         </div>
         <div class="scope-note">R-07 — Computed from Expedite gold/silver-layer data only. No external retrieval.</div>
@@ -2077,15 +2113,16 @@
   }
 
   // Renders the unified IDEAS Recommendation rationale list. Each row carries
-  // a colored dot indicating its classification — safe (green), uncertain
-  // (amber), or risk (red). Order: safe → uncertain → risk so reviewers see
-  // the strongest positives first and the blockers last.
+  // a colored dot indicating its classification — safe (green), not safe / risk
+  // (red), or flat (white). Order: safe → risk → flat so reviewers see the
+  // strongest positives first, the clear blockers next, and the inconclusive
+  // (flat) items last since they're neither good nor bad.
   function renderRationale(ul, narrative) {
     if (!ul) return;
     const items = [
       ...narrative.pros.map(t => ({ kind: 'safe', text: t })),
-      ...narrative.cons.map(t => ({ kind: 'uncertain', text: t })),
       ...narrative.risks.map(t => ({ kind: 'risk', text: t })),
+      ...narrative.cons.map(t => ({ kind: 'flat', text: t })),
     ];
     ul.innerHTML = items
       .map(i => `<li class="ir-item-${i.kind}">${i.text}</li>`)
